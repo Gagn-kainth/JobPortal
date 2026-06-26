@@ -15,7 +15,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
     },
-
+    
+    username: {
+      type: String,
+      required: true,
+    },
     password: {
       type: String,
       required: true,
@@ -26,10 +30,6 @@ const userSchema = new mongoose.Schema(
       type: String,
       enum: ["candidate", "recruiter"],
       default: "candidate",
-    },
-    username: {
-      type: String,
-      required: true,
     },
   },
   {

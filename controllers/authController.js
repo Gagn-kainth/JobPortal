@@ -1,14 +1,24 @@
+const { generateToken } = require("../middleware/jwtauth");
 const User = require("../models/User");
 
 const handleRegister = async (req, res) => {
   try {
     const data = req.body;
     const newUser = new User(data);
-    await newUser.save();
+    const response = await newUser.save();
+    console.log('data saved !')
+
+    const payload={
+      id:response.id,
+      username : response.username
+    }
+
+    const token = generateToken(payload)
 
     res.status(201).json({
+      token : token, 
       message: "User has registered",
-      User: newUser,
+      User: response,
     });
   } catch (error) {
     console.error("Error adding User :", error);
@@ -27,7 +37,15 @@ const handleLogins = async (req, res) => {
     if (!user || !(await user.comparePassword(password))) {
       return res.status(401).json({ error: "Invalid username or password" });
     }
-    res.status(200).json({ message: "Login successful", user })
+
+    const payload = {
+      id:user.id,
+      username:user.username
+    }
+    const token=generateToken(payload)
+
+
+    res.status(200).json({ message: "Login successful", token })
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Invalid Server Error !!" });
