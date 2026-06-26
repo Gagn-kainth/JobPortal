@@ -4,7 +4,7 @@ require('dotenv').config();
 const app = express();
 
 const UserRoute = require('./routes/authRoutes')
-
+const JobsRoute = require('./routes/jobRoutes')
 app.use(express.json());
 
 app.get("/", (req, res) => {
@@ -13,6 +13,7 @@ app.get("/", (req, res) => {
 
 
 app.use('/',UserRoute);
+app.use('/',JobsRoute);
 
 const PORT = 5000;
 

@@ -11,6 +11,7 @@ const handleRegister = async (req, res) => {
     const payload = {
       id: response.id,
       username: response.username,
+      role: response.role,
     };
 
     const token = generateToken(payload);
@@ -40,6 +41,7 @@ const handleLogins = async (req, res) => {
     const payload = {
       id: user.id,
       username: user.username,
+      role: user.role,
     };
     const token = generateToken(payload);
 
@@ -52,17 +54,39 @@ const handleLogins = async (req, res) => {
 
 const handleProfile = async (req, res) => {
   try {
-    const data = await User.find();
-    console.log("data fetched ");
-    res.status(200).json(data);
+    const user = await User.findById(req.user.id).select("-password");
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      user,
+    });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Invalid Server Error !!" });
+    res.status(500).json({
+      error: "Server Error",
+    });
   }
+};
+
+const updateProfile = async (req, res) => {
+  const userId = req.user.id;
+
+  const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
+    new: true,
+  });
+
+  res.status(200).json(updatedUser);
 };
 
 module.exports = {
   handleRegister,
   handleLogins,
   handleProfile,
+  updateProfile,
 };
