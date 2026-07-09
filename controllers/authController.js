@@ -4,31 +4,25 @@ const User = require("../models/User");
 const handleRegister = async (req, res) => {
   try {
     const data = req.body;
+
     const newUser = new User(data);
     const response = await newUser.save();
-    console.log("data saved !");
 
-    const payload = {
-      id: response.id,
-      username: response.username,
-      role: response.role,
-    };
+    console.log("Data saved!");
 
-    const token = generateToken(payload);
     const userObj = response.toObject();
     delete userObj.password;
 
     res.status(201).json({
-      token: token,
-      message: "User has registered",
-      User: response,
+      message: "User registered successfully",
+      user: userObj,
     });
   } catch (error) {
-    console.error("Error adding User :", error);
+    console.error("Error adding user:", error);
 
-    res
-      .status(500)
-      .json({ error: "An error occurred while adding the user ." });
+    res.status(500).json({
+      error: "An error occurred while adding the user.",
+    });
   }
 };
 
