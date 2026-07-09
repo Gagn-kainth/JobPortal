@@ -15,6 +15,9 @@ const handleRegister = async (req, res) => {
     };
 
     const token = generateToken(payload);
+    const userObj = response.toObject();
+    delete userObj.password;
+
     res.status(201).json({
       token: token,
       message: "User has registered",
@@ -75,13 +78,40 @@ const handleProfile = async (req, res) => {
 };
 
 const updateProfile = async (req, res) => {
-  const userId = req.user.id;
+  try {
+    const userId = req.user.id;
+    const { name, username } = req.body;
+    const allowedUpdates = {};
+    if (name !== undefined) allowedUpdates.name = name;
+    if (username !== undefined) allowedUpdates.username = username;
 
-  const updatedUser = await User.findByIdAndUpdate(userId, req.body, {
-    new: true,
-  });
+    const updatedUser = await User.findByIdAndUpdate(userId, allowedUpdates, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
 
-  res.status(200).json(updatedUser);
+    res.status(200).json(updatedUser);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update profile" });
+  }
+};
+const changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const user = await User.findById(req.user.id);
+
+    if (!(await user.comparePassword(currentPassword))) {
+      return res.status(401).json({ error: "Current password is incorrect" });
+    }
+
+    user.password = newPassword;
+    await user.save();
+    res.status(200).json({ message: "Password updated successfully" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to change password" });
+  }
 };
 
 module.exports = {
@@ -89,4 +119,5 @@ module.exports = {
   handleLogins,
   handleProfile,
   updateProfile,
+  changePassword,
 };

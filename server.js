@@ -1,21 +1,34 @@
 const express = require("express");
+const cors = require("cors");
+require("dotenv").config();
 const db = require("./config/db");
-require('dotenv').config();
+
+const UserRoute = require("./routes/authRoutes");
+const JobsRoute = require("./routes/jobRoutes");
+
 const app = express();
 
-const UserRoute = require('./routes/authRoutes')
-const JobsRoute = require('./routes/jobRoutes')
+app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
   res.send("Job Portal API Running...");
 });
 
+app.use("/api/auth", UserRoute);
+app.use("/api/jobs", JobsRoute);
 
-app.use('/',UserRoute);
-app.use('/',JobsRoute);
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
 
-const PORT = 5000;
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
+});
+
+const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
