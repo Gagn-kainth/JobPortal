@@ -11,10 +11,10 @@ const {
   deleteJob,
 } = require("../controllers/jobController");
 
-router.post("/jobs", jwtAuthMiddleware, authorizeRecruiter, createJob);
-router.get("/jobs", getJobs);
-router.get("/jobs/:id", getJobById);
-router.put("/jobs/:id", jwtAuthMiddleware, authorizeRecruiter, updateJob);
-router.delete("/jobs/:id", jwtAuthMiddleware, authorizeRecruiter, deleteJob);
+router.post("/", jwtAuthMiddleware, authorizeRecruiter, createJob);
+router.get("/", getJobs);
+router.get("/:id", getJobById);
+router.put("/:id", jwtAuthMiddleware, authorizeRecruiter, updateJob);
+router.delete("/:id", jwtAuthMiddleware, authorizeRecruiter, deleteJob);
 
 module.exports = router;
