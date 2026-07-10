@@ -1,6 +1,11 @@
 const express = require("express");
 const router = express.Router();
-const { registerValidation } = require("../middleware/validators");
+const {
+  registerValidation,
+  loginValidation,
+  changePasswordValidation,
+} = require("../middleware/validators");
+
 const { jwtAuthMiddleware } = require("../middleware/jwtauth");
 const { authorizeRecruiter } = require("../middleware/authorizeRecruiter");
 
@@ -22,14 +27,34 @@ const {
 const { uploadProfilePic, uploadResume } = require("../middleware/upload");
 
 router.post("/register", registerValidation, handleRegister);
-router.post("/login", handleLogins);
+router.post("/login", loginValidation, handleLogins);
 router.get("/profile", jwtAuthMiddleware, handleProfile);
-router.get("/candidates/search", jwtAuthMiddleware, authorizeRecruiter, searchCandidates);
+router.get(
+  "/candidates/search",
+  jwtAuthMiddleware,
+  authorizeRecruiter,
+  searchCandidates
+);
 router.put("/profile", jwtAuthMiddleware, updateProfile);
-router.put("/change-password", jwtAuthMiddleware, changePassword);
+router.put(
+  "/change-password",
+  jwtAuthMiddleware,
+  changePasswordValidation,
+  changePassword
+);
 router.put("/details", jwtAuthMiddleware, updateCandidateDetails);
-router.post("/profile-pic", jwtAuthMiddleware, uploadProfilePic.single("profilePic"), uploadProfilePicture);
-router.post("/resume", jwtAuthMiddleware, uploadResume.single("resume"), uploadResumeFile);
+router.post(
+  "/profile-pic",
+  jwtAuthMiddleware,
+  uploadProfilePic.single("profilePic"),
+  uploadProfilePicture
+);
+router.post(
+  "/resume",
+  jwtAuthMiddleware,
+  uploadResume.single("resume"),
+  uploadResumeFile
+);
 router.post("/experience", jwtAuthMiddleware, addExperience);
 router.delete("/experience/:expId", jwtAuthMiddleware, deleteExperience);
 router.post("/education", jwtAuthMiddleware, addEducation);

@@ -15,4 +15,50 @@ const registerValidation = [
   validate,
 ];
 
-module.exports = { registerValidation };
+const loginValidation = [
+  body("username").trim().notEmpty().withMessage("Username is required"),
+  body("password").notEmpty().withMessage("Password is required"),
+  validate,
+];
+
+const changePasswordValidation = [
+  body("currentPassword").notEmpty().withMessage("Current password is required"),
+  body("newPassword").isLength({ min: 6 }).withMessage("New password must be 6+ characters"),
+  validate,
+];
+
+const jobValidation = [
+  body("title").trim().notEmpty().withMessage("Title is required"),
+  body("company").trim().notEmpty().withMessage("Company is required"),
+  body("description").trim().notEmpty().withMessage("Description is required"),
+  body("location").trim().notEmpty().withMessage("Location is required"),
+  body("salary").isNumeric().withMessage("Salary must be a number"),
+  body("jobType")
+    .isIn(["Full-time", "Part-time", "Internship", "Contract", "Remote"])
+    .withMessage("Invalid job type"),
+  body("experienceLevel")
+    .isIn(["Fresher", "Junior", "Intermediate", "Senior"])
+    .withMessage("Invalid experience level"),
+  validate,
+];
+
+const applicationStatusValidation = [
+  body("status")
+    .isIn(["Pending", "Reviewed", "Shortlisted", "Rejected", "Hired"])
+    .withMessage("Invalid status value"),
+  validate,
+];
+
+const companyValidation = [
+  body("name").trim().notEmpty().withMessage("Company name is required"),
+  validate,
+];
+
+module.exports = {
+  registerValidation,
+  loginValidation,
+  changePasswordValidation,
+  jobValidation,
+  applicationStatusValidation,
+  companyValidation,
+};

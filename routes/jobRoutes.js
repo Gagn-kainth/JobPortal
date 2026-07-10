@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { jwtAuthMiddleware } = require("../middleware/jwtauth");
+const { jobValidation } = require("../middleware/validators");
 
 const { authorizeRecruiter } = require("../middleware/authorizeRecruiter");
 const {
@@ -14,10 +15,22 @@ const {
   getSavedJobs,
 } = require("../controllers/jobController");
 
-router.post("/", jwtAuthMiddleware, authorizeRecruiter, createJob);
+router.post(
+  "/jobs",
+  jwtAuthMiddleware,
+  authorizeRecruiter,
+  jobValidation,
+  createJob
+);
 router.get("/", getJobs);
 router.get("/:id", getJobById);
-router.put("/:id", jwtAuthMiddleware, authorizeRecruiter, updateJob);
+router.put(
+  "/jobs/:id",
+  jwtAuthMiddleware,
+  authorizeRecruiter,
+  jobValidation,
+  updateJob
+);
 router.delete("/:id", jwtAuthMiddleware, authorizeRecruiter, deleteJob);
 router.post("/:id/save", jwtAuthMiddleware, saveJob);
 router.delete("/:id/save", jwtAuthMiddleware, unsaveJob);
