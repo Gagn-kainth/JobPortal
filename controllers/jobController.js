@@ -123,6 +123,18 @@ const deleteJob = async (req, res) => {
   }
 };
 
-module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob };
+const saveJob = async (req, res) => {
+  await User.findByIdAndUpdate(req.user.id, { $addToSet: { savedJobs: req.params.id } });
+  res.status(200).json({ message: "Job saved" });
+};
 
-module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob };
+const unsaveJob = async (req, res) => {
+  await User.findByIdAndUpdate(req.user.id, { $pull: { savedJobs: req.params.id } });
+  res.status(200).json({ message: "Job unsaved" });
+};
+
+const getSavedJobs = async (req, res) => {
+  const user = await User.findById(req.user.id).populate("savedJobs");
+  res.status(200).json(user.savedJobs);
+};
+module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob , saveJob, unsaveJob, getSavedJobs };

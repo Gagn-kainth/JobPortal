@@ -108,34 +108,6 @@ const updateApplicationStatus = async (req, res) => {
   }
 };
 
-const searchCandidates = async (req, res) => {
-  try {
-    const { skills, keyword, page = 1, limit = 10 } = req.query;
-    const filter = { role: "candidate" };
- 
-    if (skills) {
-      const skillArr = skills.split(",").map((s) => s.trim());
-      filter.skills = { $in: skillArr.map((s) => new RegExp(s, "i")) };
-    }
-    if (keyword) {
-      filter.$or = [
-        { name: { $regex: keyword, $options: "i" } },
-        { "experience.title": { $regex: keyword, $options: "i" } },
-      ];
-    }
-
-    const skip = (Number(page) - 1) * Number(limit);
-
-    const [candidates, total] = await Promise.all([
-      User.find(filter).select("-password").skip(skip).limit(Number(limit)),
-      User.countDocuments(filter),
-    ]);
-
-    res.status(200).json({ candidates, total, page: Number(page), totalPages: Math.ceil(total / limit) });
-  } catch (error) {
-    res.status(500).json({ error: "Failed to search candidates" });
-  }
-};
 
 module.exports = {
   applyToJob,
@@ -143,5 +115,4 @@ module.exports = {
   withdrawApplication,
   getApplicantsForJob,
   updateApplicationStatus,
-  searchCandidates,
 };
