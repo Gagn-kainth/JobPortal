@@ -8,6 +8,8 @@ const UserRoute = require("./routes/authRoutes");
 const JobsRoute = require("./routes/jobRoutes");
 const ApplicationRoute = require("./routes/applicationRoutes");
 const CompanyRoute = require("./routes/companyRoutes");
+const DashboardRoute = require("./routes/dashboardRoutes");
+
 
 const app = express();
 
@@ -21,6 +23,7 @@ app.use("/api/auth", UserRoute);
 app.use("/api/jobs", JobsRoute);
 app.use("/api/applications", ApplicationRoute);
 app.use("/api/companies", CompanyRoute);
+app.use("/api/dashboard", DashboardRoute);
 
 app.use((req, res) => res.status(404).json({ error: "Route not found" }));
 
