@@ -112,7 +112,7 @@ const searchCandidates = async (req, res) => {
   try {
     const { skills, keyword, page = 1, limit = 10 } = req.query;
     const filter = { role: "candidate" };
-
+ 
     if (skills) {
       const skillArr = skills.split(",").map((s) => s.trim());
       filter.skills = { $in: skillArr.map((s) => new RegExp(s, "i")) };
