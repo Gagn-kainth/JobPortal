@@ -11,6 +11,7 @@ const {
   updateProfile,
   changePassword,
     updateCandidateDetails,
+  searchCandidates,
 } = require("../controllers/authController");
 const { uploadProfilePic, uploadResume } = require("../middleware/upload");
 const {
@@ -21,6 +22,7 @@ const {
 router.post("/register", registerValidation, handleRegister);
 router.post("/login", handleLogins);
 router.get("/profile", jwtAuthMiddleware, handleProfile);
+router.get("/candidates/search", jwtAuthMiddleware, authorizeRecruiter, searchCandidates);
 router.put("/profile", jwtAuthMiddleware, updateProfile);
 router.put("/change-password", jwtAuthMiddleware, changePassword);
 router.put("/details", jwtAuthMiddleware, updateCandidateDetails);
