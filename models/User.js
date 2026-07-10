@@ -3,10 +3,28 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
-    name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true },
-    username: { type: String, required: true, unique: true, trim: true },
-    password: { type: String, required: true, minlength: 6 },
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+    },
+    username: {
+      type: String,
+      required: true,
+      unique: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: true,
+      minlength: 6,
+    },
     role: {
       type: String,
       enum: ["candidate", "recruiter"],
@@ -34,6 +52,7 @@ const userSchema = new mongoose.Schema(
         to: Date,
       },
     ],
+    
     resumeUrl: { type: String, default: "" },
     savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
 
