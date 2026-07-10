@@ -1,5 +1,6 @@
 const { generateToken } = require("../middleware/jwtauth");
 const User = require("../models/User");
+const { uploadProfilePic } = require("../middleware/upload");
 
 const handleRegister = async (req, res) => {
   try {
@@ -46,6 +47,24 @@ const handleLogins = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "Invalid Server Error !!" });
+  }
+};
+const updateCandidateDetails = async (req, res) => {
+  try {
+    const { skills, experience, education } = req.body;
+    const updates = {};
+    if (skills !== undefined) updates.skills = skills;
+    if (experience !== undefined) updates.experience = experience;
+    if (education !== undefined) updates.education = education;
+
+    const user = await User.findByIdAndUpdate(req.user.id, updates, {
+      new: true,
+      runValidators: true,
+    }).select("-password");
+
+    res.status(200).json({ message: "Details updated", user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to update details" });
   }
 };
 
@@ -108,10 +127,41 @@ const changePassword = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Image file required" });
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profilePic: `/uploads/profilePics/${req.file.filename}` },
+      { new: true }
+    ).select("-password");
+    res.status(200).json({ message: "Profile picture updated", user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to upload profile picture" });
+  }
+};
+
+const uploadResumeFile = async (req, res) => {
+  try {
+    if (!req.file) return res.status(400).json({ error: "Resume file required" });
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { resumeUrl: `/uploads/resumes/${req.file.filename}` },
+      { new: true }
+    ).select("-password");
+    res.status(200).json({ message: "Resume uploaded", user });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to upload resume" });
+  }
+};
+
 module.exports = {
   handleRegister,
   handleLogins,
   handleProfile,
   updateProfile,
   changePassword,
+  uploadProfilePicture,
+  uploadResumeFile,
+  updateCandidateDetails,
 };
