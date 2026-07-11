@@ -6,6 +6,7 @@ import { MapPin, DollarSign, Clock } from "lucide-react";
 const FindJobs = () => {
   const [jobs, setJobs] = useState([]);
   const [keyword, setKeyword] = useState("");
+  const [hasResume, setHasResume] = useState(false);
   const [applyingJobId, setApplyingJobId] = useState(null);
   const [resumeFile, setResumeFile] = useState(null);
 
@@ -14,9 +15,28 @@ const FindJobs = () => {
     setJobs(res.data.jobs);
   };
 
-  useEffect(() => { fetchJobs(); }, []);
+  const checkProfile = async () => {
+    const res = await api.get("/auth/profile");
+    setHasResume(!!res.data.user.resumeUrl);
+  };
 
-  const submitApplication = async () => {
+  useEffect(() => {
+    fetchJobs();
+    checkProfile();
+  }, []);
+
+  const applyDirectly = async (jobId) => {
+    try {
+      const formData = new FormData();
+      formData.append("coverLetter", "Interested in this role");
+      await api.post(`/applications/${jobId}`, formData);
+      toast.success("Applied using your saved resume!");
+    } catch (err) {
+      toast.error(err.response?.data?.error || "Failed to apply");
+    }
+  };
+
+  const submitWithNewResume = async () => {
     if (!resumeFile) return toast.error("Please select a resume file");
     try {
       const formData = new FormData();
@@ -30,6 +50,14 @@ const FindJobs = () => {
       setResumeFile(null);
     } catch (err) {
       toast.error(err.response?.data?.error || "Failed to apply");
+    }
+  };
+
+  const handleApplyClick = (jobId) => {
+    if (hasResume) {
+      applyDirectly(jobId);
+    } else {
+      setApplyingJobId(jobId);
     }
   };
 
@@ -55,6 +83,7 @@ const FindJobs = () => {
 
             {applyingJobId === job._id ? (
               <div className="mt-4 space-y-2">
+                <p className="text-xs text-gray-500">No resume on file. Upload one to apply:</p>
                 <input
                   type="file"
                   accept=".pdf,.doc,.docx"
@@ -62,7 +91,7 @@ const FindJobs = () => {
                   className="text-sm"
                 />
                 <div className="flex gap-2">
-                  <button onClick={submitApplication} className="flex-1 bg-orange-500 text-white py-2 rounded-lg text-sm">
+                  <button onClick={submitWithNewResume} className="flex-1 bg-orange-500 text-white py-2 rounded-lg text-sm">
                     Submit
                   </button>
                   <button onClick={() => setApplyingJobId(null)} className="px-4 py-2 text-sm text-gray-500">
@@ -72,7 +101,7 @@ const FindJobs = () => {
               </div>
             ) : (
               <button
-                onClick={() => setApplyingJobId(job._id)}
+                onClick={() => handleApplyClick(job._id)}
                 className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg"
               >
                 Apply Now
