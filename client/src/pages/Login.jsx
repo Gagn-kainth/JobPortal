@@ -33,11 +33,14 @@ const Login = () => {
           </p>
 
           <div className="mb-4">
-            <label className="block text-sm font-medium mb-1">Username</label>
+            <label className="block text-sm font-medium mb-1">
+              Username or Email
+            </label>
             <input
               className="w-full border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-orange-400 transition-all"
               value={form.username}
               onChange={(e) => setForm({ ...form, username: e.target.value })}
+              placeholder="Enter username or email"
               required
             />
           </div>

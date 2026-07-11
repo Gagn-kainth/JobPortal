@@ -26,10 +26,13 @@ const handleRegister = async (req, res) => {
 const handleLogins = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username: username });
+
+    const user = await User.findOne({
+      $or: [{ username: username }, { email: username }],
+    });
 
     if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ error: "Invalid username or password" });
+      return res.status(401).json({ error: "Invalid username/email or password" });
     }
 
     const payload = { id: user.id, username: user.username, role: user.role };

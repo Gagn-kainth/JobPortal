@@ -21,11 +21,10 @@ const registerValidation = [
 ];
 
 const loginValidation = [
-  body("username").trim().notEmpty().withMessage("Username is required"),
+  body("username").trim().notEmpty().withMessage("Username or email is required"),
   body("password").notEmpty().withMessage("Password is required"),
   validate,
 ];
-
 const changePasswordValidation = [
   body("currentPassword").notEmpty().withMessage("Current password is required"),
   body("newPassword").isLength({ min: 6 }).withMessage("New password must be 6+ characters"),
