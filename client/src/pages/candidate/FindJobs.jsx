@@ -74,7 +74,10 @@ const FindJobs = () => {
       />
       <div className="grid grid-cols-2 gap-4 mt-6">
         {jobs.map((job) => (
-          <div key={job._id} className="bg-white rounded-xl p-5 shadow-sm">
+          <div
+            key={job._id}
+            className="bg-white rounded-xl p-5 shadow-sm border border-transparent transition-all duration-200 hover:shadow-lg hover:border-orange-200 hover:-translate-y-1"
+          >
             <h3 className="font-semibold text-lg">{job.title}</h3>
             <div className="flex gap-4 text-sm text-gray-500 mt-2">
               <span className="flex items-center gap-1">
@@ -88,6 +91,24 @@ const FindJobs = () => {
               </span>
             </div>
 
+            {/* Description */}
+            <p className="text-sm text-gray-600 mt-3 line-clamp-3">
+              {job.description}
+            </p>
+
+            {/* Requirements */}
+            {job.requirements?.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-3">
+                {job.requirements.map((req, i) => (
+                  <span
+                    key={i}
+                    className="bg-gray-100 text-gray-600 text-xs px-2 py-1 rounded-full"
+                  >
+                    {req}
+                  </span>
+                ))}
+              </div>
+            )}
             {applyingJobId === job._id ? (
               <div className="mt-4 space-y-2">
                 <p className="text-xs text-gray-500">
