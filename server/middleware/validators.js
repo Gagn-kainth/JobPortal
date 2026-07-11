@@ -25,6 +25,7 @@ const loginValidation = [
   body("password").notEmpty().withMessage("Password is required"),
   validate,
 ];
+
 const changePasswordValidation = [
   body("currentPassword").notEmpty().withMessage("Current password is required"),
   body("newPassword").isLength({ min: 6 }).withMessage("New password must be 6+ characters"),
@@ -48,7 +49,7 @@ const jobValidation = [
 
 const applicationStatusValidation = [
   body("status")
-    .isIn(["Pending", "Reviewed", "Shortlisted", "Rejected", "Hired"])
+    .isIn(["Pending", "Reviewed", "Shortlisted", "Interviewed", "Rejected", "Hired"])
     .withMessage("Invalid status value"),
   validate,
 ];

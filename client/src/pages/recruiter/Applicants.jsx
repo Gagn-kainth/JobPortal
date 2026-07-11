@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import Button from "../../components/Button";
+import ScheduleInterviewModal from "../../components/ScheduleInterviewModal";
 
 const statusColors = {
   Pending: "bg-blue-100 text-blue-600",
@@ -13,25 +14,29 @@ const statusColors = {
 
 const Applicants = () => {
   const [applications, setApplications] = useState([]);
+  const [scheduleFor, setScheduleFor] = useState(null); // application object to schedule interview for
 
   const fetchApplicants = async () => {
     try {
       const res = await api.get("/applications/recruiter/all");
       setApplications(res.data.applications);
-    } catch (err) {
+    } catch {
       toast.error("Failed to load applicants");
     }
   };
 
   useEffect(() => { fetchApplicants(); }, []);
 
-  const advance = async (id, nextStatus) => {
+  const updateStatus = async (id, status) => {
     try {
-      await api.put(`/applications/${id}/status`, { status: nextStatus });
-      toast.success("Status updated");
-      setApplications((prev) =>
-        prev.map((a) => (a._id === id ? { ...a, status: nextStatus } : a))
-      );
+      await api.put(`/applications/${id}/status`, { status });
+      toast.success(`Marked as ${status}`);
+      setApplications((prev) => prev.map((a) => (a._id === id ? { ...a, status } : a)));
+
+      if (status === "Shortlisted") {
+        const app = applications.find((a) => a._id === id);
+        setScheduleFor(app);
+      }
     } catch {
       toast.error("Failed to update status");
     }
@@ -46,7 +51,7 @@ const Applicants = () => {
             <th className="p-4">Candidate</th>
             <th>Applied For</th>
             <th>Status</th>
-            <th></th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -62,16 +67,41 @@ const Applicants = () => {
                     {app.status}
                   </span>
                 </td>
-                <td>
-                  <Button onClick={() => advance(app._id, "Shortlisted")} className="px-4! py-1! text-xs!">
-                    Advance
-                  </Button>
+                <td className="py-3">
+                  <div className="flex gap-2 items-center">
+                    <select
+                      value={app.status}
+                      onChange={(e) => updateStatus(app._id, e.target.value)}
+                      className="border rounded-lg text-xs px-2 py-1"
+                    >
+                      <option value="Pending">Pending</option>
+                      <option value="Reviewed">Reviewed</option>
+                      <option value="Shortlisted">Shortlisted</option>
+                      <option value="Interviewed">Interviewed</option>
+                      <option value="Hired">Hired</option>
+                    </select>
+                    <Button
+                      variant="danger"
+                      onClick={() => updateStatus(app._id, "Rejected")}
+                      className="px-3! py-1! text-xs!"
+                    >
+                      Reject
+                    </Button>
+                  </div>
                 </td>
               </tr>
             ))
           )}
         </tbody>
       </table>
+
+      {scheduleFor && (
+        <ScheduleInterviewModal
+          application={scheduleFor}
+          onClose={() => setScheduleFor(null)}
+          onScheduled={() => setScheduleFor(null)}
+        />
+      )}
     </div>
   );
 };
