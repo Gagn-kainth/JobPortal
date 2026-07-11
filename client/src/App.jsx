@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import { AuthProvider } from "./context/AuthContext";
+import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import DashboardLayout from "./layouts/DashboardLayout";
 
@@ -18,14 +18,20 @@ import MyJobs from "./pages/recruiter/MyJobs";
 import Applicants from "./pages/recruiter/Applicants";
 import PostJob from "./pages/recruiter/PostJob";
 
+
+const DashboardRouter = () => {
+  const { user } = useAuth();
+  return user?.role === "recruiter" ? <RecruiterDashboard /> : <CandidateDashboard />;
+};
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Toaster position="top-right" />
         <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="/" element={<Login />} />
+          <Route path="/home" element={<Landing />} />
           <Route path="/register" element={<Register />} />
 
           <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
@@ -42,12 +48,5 @@ function App() {
     </AuthProvider>
   );
 }
-
-// Renders correct dashboard based on role
-import { useAuth } from "./context/AuthContext";
-const DashboardRouter = () => {
-  const { user } = useAuth();
-  return user?.role === "recruiter" ? <RecruiterDashboard /> : <CandidateDashboard />;
-};
 
 export default App;
