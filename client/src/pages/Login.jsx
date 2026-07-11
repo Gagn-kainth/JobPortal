@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import toast from "react-hot-toast";
+import Button from "../components/Button";
 
 const Login = () => {
   const [form, setForm] = useState({ username: "", password: "" });
@@ -45,9 +46,7 @@ const Login = () => {
           />
         </div>
 
-        <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-2 rounded-lg font-medium">
-          Sign In
-        </button>
+        <Button type="submit" className="w-full">Sign In</Button>
 
         <p className="text-center text-sm mt-4">
           No account? <Link to="/register" className="text-orange-500">Register</Link>

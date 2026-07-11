@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
+import Button from "../../components/Button";
 
 const MyProfile = () => {
   const [profile, setProfile] = useState(null);
@@ -21,7 +22,10 @@ const MyProfile = () => {
 
   const addSkill = () => {
     if (!skillInput.trim()) return;
-    setProfile({ ...profile, skills: [...(profile.skills || []), skillInput.trim()] });
+    setProfile({
+      ...profile,
+      skills: [...(profile.skills || []), skillInput.trim()],
+    });
     setSkillInput("");
   };
 
@@ -47,14 +51,19 @@ const MyProfile = () => {
       <div className="bg-white rounded-xl p-6 mt-6 shadow-sm space-y-6">
         <div>
           <h3 className="font-semibold mb-2">Basic Info</h3>
-          <p className="text-sm text-gray-500">{profile.name} · {profile.email}</p>
+          <p className="text-sm text-gray-500">
+            {profile.name} · {profile.email}
+          </p>
         </div>
 
         <div>
           <h3 className="font-semibold mb-2">Skills</h3>
           <div className="flex flex-wrap gap-2 mb-3">
             {(profile.skills || []).map((skill, i) => (
-              <span key={i} className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm">
+              <span
+                key={i}
+                className="bg-orange-100 text-orange-600 px-3 py-1 rounded-full text-sm"
+              >
                 {skill}
               </span>
             ))}
@@ -66,9 +75,7 @@ const MyProfile = () => {
               placeholder="Add a skill"
               className="border rounded-lg px-3 py-2 text-sm flex-1"
             />
-            <button onClick={addSkill} className="bg-orange-500 text-white px-4 rounded-lg text-sm">
-              Add
-            </button>
+            <Button onClick={addSkill}>Add</Button>
           </div>
         </div>
 
@@ -77,9 +84,7 @@ const MyProfile = () => {
           <input type="file" accept=".pdf,.doc,.docx" onChange={uploadResume} />
         </div>
 
-        <button onClick={saveDetails} className="bg-orange-500 text-white px-6 py-2 rounded-lg text-sm">
-          Save Changes
-        </button>
+        <Button onClick={saveDetails}>Save Changes</Button>
       </div>
     </div>
   );

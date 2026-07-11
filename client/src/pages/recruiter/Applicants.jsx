@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
+import Button from "../../components/Button";
 
 const statusColors = {
   Pending: "bg-blue-100 text-blue-600",
@@ -49,14 +50,21 @@ const Applicants = () => {
               <td className="p-4">{app.candidate.name}</td>
               <td>{app.job?.title}</td>
               <td>
-                <span className={`px-3 py-1 rounded-full text-xs ${statusColors[app.status]}`}>
+                <span
+                  className={`px-3 py-1 rounded-full text-xs ${
+                    statusColors[app.status]
+                  }`}
+                >
                   {app.status}
                 </span>
               </td>
               <td>
-                <button onClick={() => advance(app._id, "Shortlisted")} className="bg-orange-500 text-white px-4 py-1 rounded-lg text-sm">
+                <Button
+                  onClick={() => advance(app._id, "Shortlisted")}
+                  className="px-4! py-1! text-xs!"
+                >
                   Advance
-                </button>
+                </Button>
               </td>
             </tr>
           ))}

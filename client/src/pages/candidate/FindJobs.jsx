@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
 import { MapPin, DollarSign, Clock } from "lucide-react";
+import Button from "../../components/Button";
 
 const FindJobs = () => {
   const [jobs, setJobs] = useState([]);
@@ -76,14 +77,22 @@ const FindJobs = () => {
           <div key={job._id} className="bg-white rounded-xl p-5 shadow-sm">
             <h3 className="font-semibold text-lg">{job.title}</h3>
             <div className="flex gap-4 text-sm text-gray-500 mt-2">
-              <span className="flex items-center gap-1"><MapPin size={14} /> {job.location}</span>
-              <span className="flex items-center gap-1"><DollarSign size={14} /> {job.salary}</span>
-              <span className="flex items-center gap-1"><Clock size={14} /> {job.jobType}</span>
+              <span className="flex items-center gap-1">
+                <MapPin size={14} /> {job.location}
+              </span>
+              <span className="flex items-center gap-1">
+                <DollarSign size={14} /> {job.salary}
+              </span>
+              <span className="flex items-center gap-1">
+                <Clock size={14} /> {job.jobType}
+              </span>
             </div>
 
             {applyingJobId === job._id ? (
               <div className="mt-4 space-y-2">
-                <p className="text-xs text-gray-500">No resume on file. Upload one to apply:</p>
+                <p className="text-xs text-gray-500">
+                  No resume on file. Upload one to apply:
+                </p>
                 <input
                   type="file"
                   accept=".pdf,.doc,.docx"
@@ -91,21 +100,24 @@ const FindJobs = () => {
                   className="text-sm"
                 />
                 <div className="flex gap-2">
-                  <button onClick={submitWithNewResume} className="flex-1 bg-orange-500 text-white py-2 rounded-lg text-sm">
+                  <Button onClick={submitWithNewResume} className="flex-1">
                     Submit
-                  </button>
-                  <button onClick={() => setApplyingJobId(null)} className="px-4 py-2 text-sm text-gray-500">
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    onClick={() => setApplyingJobId(null)}
+                  >
                     Cancel
-                  </button>
+                  </Button>
                 </div>
               </div>
             ) : (
-              <button
+              <Button
                 onClick={() => handleApplyClick(job._id)}
-                className="mt-4 w-full bg-orange-500 text-white py-2 rounded-lg"
+                className="w-full mt-4"
               >
                 Apply Now
-              </button>
+              </Button>
             )}
           </div>
         ))}

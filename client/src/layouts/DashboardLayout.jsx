@@ -1,8 +1,17 @@
 import { Outlet, NavLink } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
-  LayoutGrid, Search, FileText, User, Briefcase, Users, Plus, LogOut, Bell,
+  LayoutGrid,
+  Search,
+  FileText,
+  User,
+  Briefcase,
+  Users,
+  Plus,
+  LogOut,
+  Bell,
 } from "lucide-react";
+import Button from "../components/Button";
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
@@ -36,7 +45,9 @@ const DashboardLayout = () => {
           </div>
           <div>
             <p className="font-medium">{user?.name}</p>
-            <p className="text-xs text-gray-400">{isRecruiter ? "Recruiter Account" : "Job Seeker"}</p>
+            <p className="text-xs text-gray-400">
+              {isRecruiter ? "Recruiter Account" : "Job Seeker"}
+            </p>
           </div>
         </div>
         <nav className="flex-1 px-3 py-4 space-y-1">
@@ -46,7 +57,9 @@ const DashboardLayout = () => {
               to={to}
               className={({ isActive }) =>
                 `flex items-center gap-3 px-3 py-2 rounded-lg text-sm ${
-                  isActive ? "bg-orange-500/20 text-orange-400" : "text-gray-300 hover:bg-white/5"
+                  isActive
+                    ? "bg-orange-500/20 text-orange-400"
+                    : "text-gray-300 hover:bg-white/5"
                 }`
               }
             >
@@ -54,7 +67,10 @@ const DashboardLayout = () => {
             </NavLink>
           ))}
         </nav>
-        <button onClick={logout} className="flex items-center gap-3 px-6 py-4 text-gray-300 hover:text-white border-t border-white/10">
+        <button
+          onClick={logout}
+          className="flex items-center gap-3 px-6 py-4 text-gray-300 hover:text-white transition-colors duration-200 border-t border-white/10"
+        >
           <LogOut size={18} /> Sign Out
         </button>
       </aside>

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import api from "../../api/axios";
 import toast from "react-hot-toast";
+import Button from "../../components/Button";
 
 const statusColors = {
   Pending: "bg-blue-100 text-blue-600",
@@ -18,7 +19,9 @@ const MyApplications = () => {
     setApplications(res.data);
   };
 
-  useEffect(() => { fetchApplications(); }, []);
+  useEffect(() => {
+    fetchApplications();
+  }, []);
 
   const withdraw = async (id) => {
     try {
@@ -35,18 +38,31 @@ const MyApplications = () => {
       <h1 className="text-2xl font-bold">My Applications</h1>
       <div className="mt-6 space-y-3">
         {applications.map((app) => (
-          <div key={app._id} className="bg-white rounded-xl p-5 shadow-sm flex justify-between items-center">
+          <div
+            key={app._id}
+            className="bg-white rounded-xl p-5 shadow-sm flex justify-between items-center"
+          >
             <div>
               <h3 className="font-semibold">{app.job?.title}</h3>
-              <p className="text-sm text-gray-500">{app.job?.location} · {app.job?.jobType}</p>
+              <p className="text-sm text-gray-500">
+                {app.job?.location} · {app.job?.jobType}
+              </p>
             </div>
             <div className="flex items-center gap-4">
-              <span className={`px-3 py-1 rounded-full text-xs ${statusColors[app.status]}`}>
+              <span
+                className={`px-3 py-1 rounded-full text-xs ${
+                  statusColors[app.status]
+                }`}
+              >
                 {app.status}
               </span>
-              <button onClick={() => withdraw(app._id)} className="text-sm text-red-500">
+              <Button
+                variant="danger"
+                onClick={() => withdraw(app._id)}
+                className="px-4! py-1! text-xs!"
+              >
                 Withdraw
-              </button>
+              </Button>
             </div>
           </div>
         ))}
