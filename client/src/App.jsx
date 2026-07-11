@@ -17,11 +17,16 @@ import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import MyJobs from "./pages/recruiter/MyJobs";
 import Applicants from "./pages/recruiter/Applicants";
 import PostJob from "./pages/recruiter/PostJob";
-
+import EditJob from "./pages/recruiter/EditJob";
+import JobDetails from "./pages/JobDetails";
 
 const DashboardRouter = () => {
   const { user } = useAuth();
-  return user?.role === "recruiter" ? <RecruiterDashboard /> : <CandidateDashboard />;
+  return user?.role === "recruiter" ? (
+    <RecruiterDashboard />
+  ) : (
+    <CandidateDashboard />
+  );
 };
 
 function App() {
@@ -34,7 +39,13 @@ function App() {
           <Route path="/home" element={<Landing />} />
           <Route path="/register" element={<Register />} />
 
-          <Route element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>}>
+          <Route
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          >
             <Route path="/dashboard" element={<DashboardRouter />} />
             <Route path="/jobs" element={<FindJobs />} />
             <Route path="/applications" element={<MyApplications />} />
@@ -42,6 +53,8 @@ function App() {
             <Route path="/my-jobs" element={<MyJobs />} />
             <Route path="/applicants" element={<Applicants />} />
             <Route path="/post-job" element={<PostJob />} />
+            <Route path="/jobs/:id/edit" element={<EditJob />} />
+            <Route path="/jobs/:id" element={<JobDetails />} />
           </Route>
         </Routes>
       </BrowserRouter>
