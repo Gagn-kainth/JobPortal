@@ -1,4 +1,4 @@
-import { Outlet, NavLink } from "react-router-dom";
+import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import {
   LayoutGrid,
@@ -11,11 +11,16 @@ import {
   LogOut,
   Bell,
 } from "lucide-react";
-import Button from "../components/Button";
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
+  const navigate = useNavigate();
   const isRecruiter = user?.role === "recruiter";
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
+  };
 
   const candidateLinks = [
     { to: "/dashboard", label: "Overview", icon: LayoutGrid },
@@ -68,7 +73,7 @@ const DashboardLayout = () => {
           ))}
         </nav>
         <button
-          onClick={logout}
+          onClick={handleLogout}
           className="flex items-center gap-3 px-6 py-4 text-gray-300 hover:text-white transition-colors duration-200 border-t border-white/10"
         >
           <LogOut size={18} /> Sign Out

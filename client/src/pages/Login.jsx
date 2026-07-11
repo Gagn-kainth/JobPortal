@@ -28,7 +28,9 @@ const Login = () => {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8">
         <form onSubmit={handleSubmit} className="w-full max-w-sm">
           <h2 className="text-2xl font-bold mb-1">Welcome back</h2>
-          <p className="text-gray-500 text-sm mb-6">Sign in to continue to TalentPath</p>
+          <p className="text-gray-500 text-sm mb-6">
+            Sign in to continue to TalentPath
+          </p>
 
           <div className="mb-4">
             <label className="block text-sm font-medium mb-1">Username</label>
@@ -51,10 +53,15 @@ const Login = () => {
             />
           </div>
 
-          <Button type="submit" className="w-full">Sign In</Button>
+          <Button type="submit" className="w-full">
+            Sign In
+          </Button>
 
           <p className="text-center text-sm mt-4">
-            No account? <Link to="/" className="text-orange-500 font-medium">Register</Link>
+            No account?{" "}
+            <Link to="/register" className="text-orange-500 font-medium">
+              Register
+            </Link>
           </p>
         </form>
       </div>

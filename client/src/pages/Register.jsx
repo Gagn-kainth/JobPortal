@@ -27,7 +27,7 @@ const Register = () => {
     try {
       await register(form);
       toast.success("Registered! Please login.");
-      navigate("/login");
+      navigate("/");
     } catch (err) {
       toast.error(err.response?.data?.error || "Registration failed");
     }
@@ -85,7 +85,7 @@ const Register = () => {
           <Button type="submit" className="w-full">Create Account</Button>
 
           <p className="text-center text-sm mt-4">
-            Already have an account? <Link to="/login" className="text-orange-500 font-medium">Sign In</Link>
+            Already have an account? <Link to="/" className="text-orange-500 font-medium">Sign In</Link>
           </p>
         </form>
       </div>
