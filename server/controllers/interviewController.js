@@ -1,16 +1,12 @@
 const Interview = require("../models/Interview");
 const Application = require("../models/Application");
-const sendEmail = require("../utils/sendEmail");
 
 const scheduleInterview = async (req, res) => {
   try {
     const { applicationId, scheduledAt, mode, notes } = req.body;
 
-    const application = await Application.findById(applicationId).populate(
-      "job candidate"
-    );
-    if (!application)
-      return res.status(404).json({ error: "Application not found" });
+    const application = await Application.findById(applicationId).populate("job candidate");
+    if (!application) return res.status(404).json({ error: "Application not found" });
 
     if (application.job.createdBy.toString() !== req.user.id) {
       return res.status(403).json({ error: "Not authorized" });
@@ -24,14 +20,6 @@ const scheduleInterview = async (req, res) => {
       scheduledAt,
       mode,
       notes,
-    });
-
-    sendEmail({
-      to: application.candidate.email,
-      subject: "Interview Scheduled",
-      text: `Your interview for ${
-        application.job.title
-      } has been scheduled on ${new Date(scheduledAt).toLocaleString()}.`,
     });
 
     res.status(201).json({ message: "Interview scheduled", interview });
