@@ -14,11 +14,16 @@ const statusColors = {
 const Applicants = () => {
   const [applications, setApplications] = useState([]);
 
-  // NOTE: replace jobId with real selected job id from a job dropdown/list
-  const fetchApplicants = async (jobId) => {
-    const res = await api.get(`/applications/job/${jobId}`);
-    setApplications(res.data.applications);
+  const fetchApplicants = async () => {
+    try {
+      const res = await api.get("/applications/recruiter/all");
+      setApplications(res.data.applications);
+    } catch (err) {
+      toast.error("Failed to load applicants");
+    }
   };
+
+  useEffect(() => { fetchApplicants(); }, []);
 
   const advance = async (id, nextStatus) => {
     try {
@@ -45,29 +50,26 @@ const Applicants = () => {
           </tr>
         </thead>
         <tbody>
-          {applications.map((app) => (
-            <tr key={app._id} className="border-b">
-              <td className="p-4">{app.candidate.name}</td>
-              <td>{app.job?.title}</td>
-              <td>
-                <span
-                  className={`px-3 py-1 rounded-full text-xs ${
-                    statusColors[app.status]
-                  }`}
-                >
-                  {app.status}
-                </span>
-              </td>
-              <td>
-                <Button
-                  onClick={() => advance(app._id, "Shortlisted")}
-                  className="px-4! py-1! text-xs!"
-                >
-                  Advance
-                </Button>
-              </td>
-            </tr>
-          ))}
+          {applications.length === 0 ? (
+            <tr><td className="p-4 text-gray-400" colSpan={4}>No applicants yet</td></tr>
+          ) : (
+            applications.map((app) => (
+              <tr key={app._id} className="border-b transition-colors duration-150 hover:bg-orange-50/50">
+                <td className="p-4">{app.candidate?.name}</td>
+                <td>{app.job?.title}</td>
+                <td>
+                  <span className={`px-3 py-1 rounded-full text-xs ${statusColors[app.status]}`}>
+                    {app.status}
+                  </span>
+                </td>
+                <td>
+                  <Button onClick={() => advance(app._id, "Shortlisted")} className="px-4! py-1! text-xs!">
+                    Advance
+                  </Button>
+                </td>
+              </tr>
+            ))
+          )}
         </tbody>
       </table>
     </div>

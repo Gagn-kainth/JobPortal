@@ -3,6 +3,7 @@ const Job = require("../models/Job");
 
 const User = require("../models/User");
 
+
 const applyToJob = async (req, res) => {
   try {
     const { jobId } = req.params;
@@ -120,11 +121,39 @@ const updateApplicationStatus = async (req, res) => {
   }
 };
 
+const getAllApplicantsForRecruiter = async (req, res) => {
+  try {
+    const { status, page = 1, limit = 20 } = req.query;
+
+    const jobs = await Job.find({ createdBy: req.user.id }).select("_id");
+    const jobIds = jobs.map((j) => j._id);
+
+    const filter = { job: { $in: jobIds } };
+    if (status) filter.status = status;
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [applications, total] = await Promise.all([
+      Application.find(filter)
+        .populate("candidate", "name email skills resumeUrl profilePic")
+        .populate("job", "title")
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit)),
+      Application.countDocuments(filter),
+    ]);
+
+    res.status(200).json({ applications, total, page: Number(page), totalPages: Math.ceil(total / limit) });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch applicants" });
+  }
+};
 
 module.exports = {
   applyToJob,
   getMyApplications,
   withdrawApplication,
   getApplicantsForJob,
+  getAllApplicantsForRecruiter,
   updateApplicationStatus,
 };
