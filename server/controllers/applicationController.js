@@ -1,20 +1,33 @@
 const Application = require("../models/Application");
 const Job = require("../models/Job");
 
+const User = require("../models/User");
+
 const applyToJob = async (req, res) => {
   try {
     const { jobId } = req.params;
     const { coverLetter } = req.body;
 
-    if (!req.file) return res.status(400).json({ error: "Resume file is required" });
-
     const job = await Job.findById(jobId);
     if (!job) return res.status(404).json({ error: "Job not found" });
+
+    let resumeUrl;
+    if (req.file) {
+      // candidate uploaded a fresh resume for this specific application
+      resumeUrl = `/uploads/resumes/${req.file.filename}`;
+    } else {
+      // fall back to their saved profile resume
+      const user = await User.findById(req.user.id);
+      if (!user.resumeUrl) {
+        return res.status(400).json({ error: "No resume found. Please upload a resume." });
+      }
+      resumeUrl = user.resumeUrl;
+    }
 
     const application = await Application.create({
       job: jobId,
       candidate: req.user.id,
-      resumeUrl: `/uploads/resumes/${req.file.filename}`,
+      resumeUrl,
       coverLetter,
     });
 
@@ -27,7 +40,6 @@ const applyToJob = async (req, res) => {
     res.status(500).json({ error: "Failed to apply to job" });
   }
 };
-
 const getMyApplications = async (req, res) => {
   try {
     const applications = await Application.find({ candidate: req.user.id })
