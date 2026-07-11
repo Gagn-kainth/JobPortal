@@ -137,4 +137,23 @@ const getSavedJobs = async (req, res) => {
   const user = await User.findById(req.user.id).populate("savedJobs");
   res.status(200).json(user.savedJobs);
 };
-module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob , saveJob, unsaveJob, getSavedJobs };
+
+const getMyJobs = async (req, res) => {
+  try {
+    const { page = 1, limit = 20 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [jobs, total] = await Promise.all([
+      Job.find({ createdBy: req.user.id })
+        .sort({ createdAt: -1 })
+        .skip(skip)
+        .limit(Number(limit)),
+      Job.countDocuments({ createdBy: req.user.id }),
+    ]);
+
+    res.status(200).json({ jobs, total, page: Number(page), totalPages: Math.ceil(total / limit) });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch your jobs" });
+  }
+};
+module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob , saveJob, unsaveJob, getSavedJobs , getMyJobs};

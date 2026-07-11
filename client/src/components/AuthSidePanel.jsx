@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Briefcase } from "lucide-react";
 
 const quotes = [
@@ -16,7 +17,8 @@ const quotes = [
 ];
 
 const AuthSidePanel = () => {
-  const quote = quotes[Math.floor(Math.random() * quotes.length)];
+ 
+  const [quote] = useState(() => quotes[Math.floor(Math.random() * quotes.length)]);
 
   return (
     <div className="hidden lg:flex flex-col justify-between w-1/2 bg-[#1a1d29] text-white p-12 relative overflow-hidden">
@@ -33,7 +35,6 @@ const AuthSidePanel = () => {
         Join over 12,000+ companies hiring on TalentPath.
       </p>
 
-      {/* decorative background circles */}
       <div className="absolute -top-20 -right-20 w-72 h-72 bg-orange-500/10 rounded-full" />
       <div className="absolute bottom-10 -left-10 w-56 h-56 bg-orange-500/5 rounded-full" />
     </div>
