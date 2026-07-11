@@ -16,7 +16,7 @@ const {
 } = require("../controllers/jobController");
 
 router.post(
-  "/jobs",
+  "/",
   jwtAuthMiddleware,
   authorizeRecruiter,
   jobValidation,
