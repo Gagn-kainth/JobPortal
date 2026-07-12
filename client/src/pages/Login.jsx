@@ -68,6 +68,7 @@ const Login = () => {
                              transition-shadow duration-150"
                   value={form.password}
                   onChange={(e) => setForm({ ...form, password: e.target.value })}
+                  placeholder="Enter your password"
                   required
                 />
                 <button
