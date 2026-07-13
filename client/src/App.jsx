@@ -19,6 +19,8 @@ import Applicants from "./pages/recruiter/Applicants";
 import PostJob from "./pages/recruiter/PostJob";
 import EditJob from "./pages/recruiter/EditJob";
 import JobDetails from "./pages/JobDetails";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const DashboardRouter = () => {
   const { user } = useAuth();
@@ -56,6 +58,8 @@ function App() {
             <Route path="/jobs/:id/edit" element={<EditJob />} />
             <Route path="/jobs/:id" element={<JobDetails />} />
           </Route>
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password/:token" element={<ResetPassword />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>

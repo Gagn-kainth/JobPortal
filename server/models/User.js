@@ -52,9 +52,24 @@ const userSchema = new mongoose.Schema(
         to: Date,
       },
     ],
-    
-    resumeUrl: { type: String, default: "" },
-    savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
+    resetPasswordToken: {
+      type: String,
+    },
+
+    resetPasswordExpires: {
+      type: Date,
+    },
+
+    resumeUrl: {
+      type: String,
+      default: "",
+    },
+    savedJobs: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Job",
+      },
+    ],
 
     // Recruiter-only field
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },

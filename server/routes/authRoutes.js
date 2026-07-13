@@ -4,6 +4,8 @@ const {
   registerValidation,
   loginValidation,
   changePasswordValidation,
+  forgotPasswordValidation,
+  resetPasswordValidation,
 } = require("../middleware/validators");
 
 const { jwtAuthMiddleware } = require("../middleware/jwtauth");
@@ -23,6 +25,8 @@ const {
   searchCandidates,
   uploadProfilePicture,
   uploadResumeFile,
+  forgotPassword,
+  resetPassword,
 } = require("../controllers/authController");
 const { uploadProfilePic, uploadResume } = require("../middleware/upload");
 
@@ -59,5 +63,8 @@ router.post("/experience", jwtAuthMiddleware, addExperience);
 router.delete("/experience/:expId", jwtAuthMiddleware, deleteExperience);
 router.post("/education", jwtAuthMiddleware, addEducation);
 router.delete("/education/:eduId", jwtAuthMiddleware, deleteEducation);
+router.post("/forgot-password", forgotPasswordValidation, forgotPassword);
+router.put("/reset-password/:token", resetPasswordValidation, resetPassword);
+
 
 module.exports = router;

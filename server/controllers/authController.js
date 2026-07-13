@@ -1,5 +1,7 @@
 const { generateToken } = require("../middleware/jwtauth");
 const User = require("../models/User");
+const crypto = require("crypto");
+const sendEmail = require("../utils/sendEmail");
 
 const handleRegister = async (req, res) => {
   try {
@@ -222,6 +224,64 @@ const searchCandidates = async (req, res) => {
   }
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(200).json({ message: "If that email exists, a reset link has been sent." });
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = crypto.createHash("sha256").update(resetToken).digest("hex");
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; 
+    await user.save();
+
+    const resetUrl = `${process.env.CLIENT_URL}/reset-password/${resetToken}`;
+
+    await sendEmail({
+      to: user.email,
+      subject: "Password Reset Request",
+      text: `You requested a password reset. Click this link to reset your password: ${resetUrl}\n\nThis link expires in 15 minutes. If you didn't request this, ignore this email.`,
+    });
+
+    res.status(200).json({ message: "If that email exists, a reset link has been sent." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to process request" });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const { newPassword } = req.body;
+
+    const hashedToken = crypto.createHash("sha256").update(token).digest("hex");
+
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      return res.status(400).json({ error: "Invalid or expired reset link" });
+    }
+
+    user.password = newPassword;
+    user.resetPasswordToken = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful. Please login." });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Failed to reset password" });
+  }
+};
+
+
 module.exports = {
   handleRegister,
   handleLogins,
@@ -236,4 +296,6 @@ module.exports = {
   addEducation,
   deleteEducation,
   searchCandidates,
+  forgotPassword,
+  resetPassword,
 };
