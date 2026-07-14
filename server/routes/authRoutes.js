@@ -1,4 +1,5 @@
 const express = require("express");
+const multer = require("multer");
 const router = express.Router();
 const {
   registerValidation,
@@ -27,6 +28,7 @@ const {
   uploadResumeFile,
   forgotPassword,
   resetPassword,
+  updateAvatar,
 } = require("../controllers/authController");
 const { uploadProfilePic, uploadResume } = require("../middleware/upload");
 
@@ -48,10 +50,10 @@ router.put(
 );
 router.put("/details", jwtAuthMiddleware, updateCandidateDetails);
 router.post(
-  "/profile-pic",
+  "/avatar",
   jwtAuthMiddleware,
   uploadProfilePic.single("profilePic"),
-  uploadProfilePicture
+  updateAvatar
 );
 router.post(
   "/resume",
@@ -65,6 +67,7 @@ router.post("/education", jwtAuthMiddleware, addEducation);
 router.delete("/education/:eduId", jwtAuthMiddleware, deleteEducation);
 router.post("/forgot-password", forgotPasswordValidation, forgotPassword);
 router.put("/reset-password/:token", resetPasswordValidation, resetPassword);
+router.post("/", jwtAuthMiddleware, updateAvatar);
 
 
 module.exports = router;

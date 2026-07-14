@@ -70,7 +70,37 @@ const userSchema = new mongoose.Schema(
         ref: "Job",
       },
     ],
-
+    phone: {
+      type: String,
+      default: "",
+    },
+    location: {
+      type: String,
+      default: "",
+    },
+    bio: {
+      type: String,
+      default: "",
+    },
+    linkedin: {
+      type: String,
+      default: "",
+    },
+    portfolio: {
+      type: String,
+      default: "",
+    },
+    education: [
+      {
+        school: { type: String, required: true },
+        degree: { type: String, default: "" },
+        year: { type: String, default: "" },
+      },
+    ],
+    profilePic: {
+      type: String,
+      default: "",
+    },
     // Recruiter-only field
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
   },

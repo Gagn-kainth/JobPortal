@@ -106,11 +106,11 @@ const Applicants = () => {
 
   const SortIcon = ({ col }) => {
     if (sortBy !== col)
-      return <ArrowUpDown size={12} className="text-gray-300" />;
+      return <ArrowUpDown size={12} className="text-gray-300 shrink-0" />;
     return order === "asc" ? (
-      <ArrowUp size={12} className="text-orange-500" />
+      <ArrowUp size={12} className="text-orange-500 shrink-0" />
     ) : (
-      <ArrowDown size={12} className="text-orange-500" />
+      <ArrowDown size={12} className="text-orange-500 shrink-0" />
     );
   };
 
@@ -163,27 +163,27 @@ const Applicants = () => {
 
       <div className="mt-6 bg-white rounded-xl shadow-sm border border-gray-100">
         <div className="overflow-x-auto">
-          <table className="w-full min-w-225 border-collapse">
-            <thead className="text-left text-sm text-gray-500 bg-gray-50/50">
+          <table className="w-full border-collapse">
+            <thead className="text-left text-sm font-medium text-gray-500 bg-gray-50/50">
               <tr>
                 {columns.map((col) => (
                   <th
                     key={col.key}
                     onClick={() => handleSort(col.key)}
-                    className="p-4 cursor-pointer select-none hover:text-gray-700 transition-colors whitespace-nowrap border-b border-gray-100"
+                    className="px-3 py-2.5 cursor-pointer select-none hover:text-gray-700 transition-colors border-b border-gray-100 whitespace-nowrap"
                   >
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1">
                       {col.label}
                       <SortIcon col={col.key} />
                     </div>
                   </th>
                 ))}
-                <th className="p-4 whitespace-nowrap min-w-55 border-b border-gray-100">
+                <th className="px-3 py-2.5 border-b border-gray-100 whitespace-nowrap">
                   Actions
                 </th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="text-sm">
               {loading ? (
                 Array.from({ length: 5 }).map((_, i) => <SkeletonRow key={i} />)
               ) : applications.length === 0 ? (
@@ -204,10 +204,10 @@ const Applicants = () => {
                 applications.map((app) => (
                   <tr
                     key={app._id}
-                    className="transition-colors duration-150 hover:bg-orange-50/30 border-b border-gray-100 last:border-b-0"
+                    className="border-b border-gray-100 last:border-b-0 transition-colors duration-150 hover:bg-gray-50/50"
                   >
-                    <td className="p-4">
-                      <div className="flex items-center gap-3">
+                    <td className="px-3 py-2.5">
+                      <div className="flex items-center gap-2">
                         <Avatar
                           name={app.candidate?.name}
                           imageUrl={
@@ -215,44 +215,44 @@ const Applicants = () => {
                               ? `${BASE_URL}${app.candidate.profilePic}`
                               : null
                           }
+                          size="sm"
                         />
-                        <span className="font-medium text-sm">
+                        <span className="font-medium text-gray-900 text-sm">
                           {app.candidate?.name}
                         </span>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2.5">
                       <a
                         href={`mailto:${app.candidate?.email}`}
-                        className="text-sm text-gray-600 hover:text-orange-500 hover:underline"
+                        className="text-gray-600 hover:text-orange-500 hover:underline text-sm"
                       >
                         {app.candidate?.email}
                       </a>
                     </td>
-                    <td className="px-4 py-3 text-sm">{app.job?.title}</td>
-                    <td
-                      className="px-4 py-3 text-sm text-gray-500"
-                      title={new Date(app.createdAt).toLocaleString()}
-                    >
+                    <td className="px-3 py-2.5 text-gray-700 text-sm">
+                      {app.job?.title}
+                    </td>
+                    <td className="px-3 py-2.5 text-gray-500 text-sm whitespace-nowrap">
                       {formatRelativeDate(app.createdAt)}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2.5">
                       {app.resumeUrl ? (
                         <a
                           href={`${BASE_URL}${app.resumeUrl}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-orange-500 text-sm font-medium hover:underline"
+                          className="text-orange-500 font-medium hover:underline text-sm"
                         >
                           View
                         </a>
                       ) : (
-                        <span className="text-gray-400 text-sm">—</span>
+                        <span className="text-gray-300 text-sm">—</span>
                       )}
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-3 py-2.5">
                       <span
-                        className={`px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
                           statusColors[app.status] ||
                           "bg-gray-100 text-gray-600"
                         }`}
@@ -260,22 +260,30 @@ const Applicants = () => {
                         {app.status}
                       </span>
                     </td>
-
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2 items-center">
-                        <Dropdown
-                          options={statusUpdateOptions}
+                    <td className="px-3 py-2.5">
+                      <div className="flex items-center gap-2">
+                        <select
                           value={app.status}
-                          onChange={(status) => updateStatus(app._id, status)}
-                          className="w-36"
-                        />
-                        <Button
-                          variant="danger"
+                          onChange={(e) =>
+                            updateStatus(app._id, e.target.value)
+                          }
+                          className="h-8 px-2 rounded-lg border border-gray-200 text-xs bg-white
+                               focus:outline-none focus:border-orange-400 focus:ring-2 focus:ring-orange-400/10
+                               transition-shadow cursor-pointer"
+                        >
+                          {statusUpdateOptions.map((opt) => (
+                            <option key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </option>
+                          ))}
+                        </select>
+                        <button
                           onClick={() => updateStatus(app._id, "Rejected")}
-                          className="px-3! py-1! text-xs! shrink-0 whitespace-nowrap"
+                          className="h-8 px-3 rounded-lg border border-red-200 text-red-600 text-xs font-medium
+                               hover:bg-red-50 transition-colors"
                         >
                           Reject
-                        </Button>
+                        </button>
                       </div>
                     </td>
                   </tr>
@@ -285,7 +293,6 @@ const Applicants = () => {
           </table>
         </div>
       </div>
-
       {!loading && applications.length > 0 && (
         <div className="flex justify-between items-center mt-4">
           <p className="text-sm text-gray-500">

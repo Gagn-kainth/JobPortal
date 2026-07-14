@@ -280,8 +280,24 @@ const resetPassword = async (req, res) => {
     res.status(500).json({ error: "Failed to reset password" });
   }
 };
+const updateAvatar = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "Image file is required" });
+    }
 
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profilePic: `/uploads/profilePics/${req.file.filename}` },
+      { returnDocument: "after" }
+    ).select("-password");
 
+    res.json({ user });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "Failed to update avatar" });
+  }
+};
 module.exports = {
   handleRegister,
   handleLogins,
@@ -298,4 +314,5 @@ module.exports = {
   searchCandidates,
   forgotPassword,
   resetPassword,
+  updateAvatar,
 };

@@ -1,4 +1,5 @@
 const Job = require("../models/Job");
+const User = require("../models/User"); // <-- ADD THIS
 
 const createJob = async (req, res) => {
   try {
@@ -20,7 +21,6 @@ const createJob = async (req, res) => {
     });
   }
 };
-
 
 const getJobs = async (req, res) => {
   try {
@@ -90,7 +90,6 @@ const updateJob = async (req, res) => {
     const job = await Job.findById(req.params.id);
     if (!job) return res.status(404).json({ error: "Job not found" });
 
-
     if (job.createdBy.toString() !== req.user.id) {
       return res.status(403).json({ error: "Not authorized to edit this job" });
     }
@@ -123,19 +122,37 @@ const deleteJob = async (req, res) => {
   }
 };
 
+// FIXED: Added try/catch and proper error handling
 const saveJob = async (req, res) => {
-  await User.findByIdAndUpdate(req.user.id, { $addToSet: { savedJobs: req.params.id } });
-  res.status(200).json({ message: "Job saved" });
+  try {
+    await User.findByIdAndUpdate(req.user.id, { $addToSet: { savedJobs: req.params.id } });
+    res.status(200).json({ message: "Job saved" });
+  } catch (error) {
+    console.error("saveJob error:", error);
+    res.status(500).json({ error: error.message || "Failed to save job" });
+  }
 };
 
+// FIXED: Added try/catch and proper error handling
 const unsaveJob = async (req, res) => {
-  await User.findByIdAndUpdate(req.user.id, { $pull: { savedJobs: req.params.id } });
-  res.status(200).json({ message: "Job unsaved" });
+  try {
+    await User.findByIdAndUpdate(req.user.id, { $pull: { savedJobs: req.params.id } });
+    res.status(200).json({ message: "Job unsaved" });
+  } catch (error) {
+    console.error("unsaveJob error:", error);
+    res.status(500).json({ error: error.message || "Failed to unsave job" });
+  }
 };
 
+// FIXED: Added try/catch and proper error handling
 const getSavedJobs = async (req, res) => {
-  const user = await User.findById(req.user.id).populate("savedJobs");
-  res.status(200).json(user.savedJobs);
+  try {
+    const user = await User.findById(req.user.id).populate("savedJobs");
+    res.status(200).json(user.savedJobs);
+  } catch (error) {
+    console.error("getSavedJobs error:", error);
+    res.status(500).json({ error: error.message || "Failed to fetch saved jobs" });
+  }
 };
 
 const getMyJobs = async (req, res) => {
@@ -156,4 +173,5 @@ const getMyJobs = async (req, res) => {
     res.status(500).json({ error: "Failed to fetch your jobs" });
   }
 };
-module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob , saveJob, unsaveJob, getSavedJobs , getMyJobs};
+
+module.exports = { createJob, getJobs, getJobById, updateJob, deleteJob, saveJob, unsaveJob, getSavedJobs, getMyJobs };
