@@ -140,33 +140,89 @@ const updateApplicationStatus = async (req, res) => {
 
 const getAllApplicantsForRecruiter = async (req, res) => {
   try {
-    const { status, page = 1, limit = 20 } = req.query;
+    const {
+      search = "",
+      status = "",
+      sortBy = "createdAt",
+      order = "desc",
+      page = 1,
+      limit = 10,
+    } = req.query;
 
     const jobs = await Job.find({ createdBy: req.user.id }).select("_id");
     const jobIds = jobs.map((j) => j._id);
 
-    const filter = { job: { $in: jobIds } };
-    if (status) filter.status = status;
+    const matchStage = { job: { $in: jobIds } };
+    if (status && status !== "All") {
+      matchStage.status = status;
+    }
+
+    const sortFieldMap = {
+      name: "candidateInfo.name",
+      email: "candidateInfo.email",
+      jobTitle: "jobInfo.title",
+      status: "status",
+      appliedDate: "createdAt",
+    };
+    const sortField = sortFieldMap[sortBy] || "createdAt";
+    const sortOrder = order === "asc" ? 1 : -1;
 
     const skip = (Number(page) - 1) * Number(limit);
 
-    const [applications, total] = await Promise.all([
-      Application.find(filter)
-        .populate("candidate", "name email skills resumeUrl profilePic")
-        .populate("job", "title")
-        .sort({ createdAt: -1 })
-        .skip(skip)
-        .limit(Number(limit)),
-      Application.countDocuments(filter),
-    ]);
+    const pipeline = [
+      { $match: matchStage },
+      { $lookup: { from: "users", localField: "candidate", foreignField: "_id", as: "candidateInfo" } },
+      { $unwind: "$candidateInfo" },
+      { $lookup: { from: "jobs", localField: "job", foreignField: "_id", as: "jobInfo" } },
+      { $unwind: "$jobInfo" },
+    ];
+
+    if (search) {
+      pipeline.push({
+        $match: {
+          $or: [
+            { "candidateInfo.name": { $regex: search, $options: "i" } },
+            { "candidateInfo.email": { $regex: search, $options: "i" } },
+            { "jobInfo.title": { $regex: search, $options: "i" } },
+          ],
+        },
+      });
+    }
+
+    const countPipeline = [...pipeline, { $count: "total" }];
+    const totalResult = await Application.aggregate(countPipeline);
+    const totalApplicants = totalResult[0]?.total || 0;
+
+    pipeline.push(
+      { $sort: { [sortField]: sortOrder } },
+      { $skip: skip },
+      { $limit: Number(limit) },
+      {
+        $project: {
+          status: 1,
+          resumeUrl: 1,
+          coverLetter: 1,
+          createdAt: 1,
+          "candidate._id": "$candidateInfo._id",
+          "candidate.name": "$candidateInfo.name",
+          "candidate.email": "$candidateInfo.email",
+          "candidate.profilePic": "$candidateInfo.profilePic",
+          "job._id": "$jobInfo._id",
+          "job.title": "$jobInfo.title",
+        },
+      }
+    );
+
+    const applications = await Application.aggregate(pipeline);
 
     res.status(200).json({
       applications,
-      total,
-      page: Number(page),
-      totalPages: Math.ceil(total / limit),
+      totalApplicants,
+      currentPage: Number(page),
+      totalPages: Math.ceil(totalApplicants / limit),
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({ error: "Failed to fetch applicants" });
   }
 };
