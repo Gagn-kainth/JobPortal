@@ -3,28 +3,10 @@ const bcrypt = require("bcrypt");
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: true,
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: true,
-      unique: true,
-      lowercase: true,
-    },
-    username: {
-      type: String,
-      required: true,
-      unique: true,
-      trim: true,
-    },
-    password: {
-      type: String,
-      required: true,
-      minlength: 8,
-    },
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    username: { type: String, required: true, unique: true, trim: true },
+    password: { type: String, required: true, minlength: 8 },
     role: {
       type: String,
       enum: ["candidate", "recruiter"],
@@ -46,61 +28,25 @@ const userSchema = new mongoose.Schema(
     ],
     education: [
       {
-        degree: String,
-        institution: String,
-        from: Date,
-        to: Date,
-      },
-    ],
-    resetPasswordToken: {
-      type: String,
-    },
-
-    resetPasswordExpires: {
-      type: Date,
-    },
-
-    resumeUrl: {
-      type: String,
-      default: "",
-    },
-    savedJobs: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Job",
-      },
-    ],
-    phone: {
-      type: String,
-      default: "",
-    },
-    location: {
-      type: String,
-      default: "",
-    },
-    bio: {
-      type: String,
-      default: "",
-    },
-    linkedin: {
-      type: String,
-      default: "",
-    },
-    portfolio: {
-      type: String,
-      default: "",
-    },
-    education: [
-      {
         school: { type: String, required: true },
         degree: { type: String, default: "" },
         year: { type: String, default: "" },
       },
     ],
-    profilePic: {
-      type: String,
-      default: "",
-    },
+
+    resetPasswordToken: { type: String },
+    resetPasswordExpires: { type: Date },
+
+    resumeUrl: { type: String, default: "" },
+    savedJobs: [{ type: mongoose.Schema.Types.ObjectId, ref: "Job" }],
+
+    phone: { type: String, default: "" },
+    location: { type: String, default: "" },
+    bio: { type: String, default: "" },
+    linkedin: { type: String, default: "" },
+    portfolio: { type: String, default: "" },
+    github: { type: String, default: "" }, // ⬅ added, was missing entirely
+
     // Recruiter-only field
     company: { type: mongoose.Schema.Types.ObjectId, ref: "Company" },
   },

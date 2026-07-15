@@ -1,5 +1,8 @@
 import { Outlet, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import Avatar from "../components/Avatar";
+import NotificationBell from "../components/NotificationBell";
+
 import {
   LayoutGrid,
   Search,
@@ -9,8 +12,9 @@ import {
   Users,
   Plus,
   LogOut,
-  Bell,
 } from "lucide-react";
+
+const BASE_URL = import.meta.env.VITE_API_URL;
 
 const DashboardLayout = () => {
   const { user, logout } = useAuth();
@@ -37,6 +41,7 @@ const DashboardLayout = () => {
   ];
 
   const links = isRecruiter ? recruiterLinks : candidateLinks;
+  const avatarUrl = user?.profilePic ? `${BASE_URL}${user.profilePic}` : null;
 
   return (
     <div className="flex min-h-screen bg-[#f5f0e8]">
@@ -45,9 +50,7 @@ const DashboardLayout = () => {
           <Briefcase className="text-orange-500" /> TalentPath
         </div>
         <div className="px-6 py-3 flex items-center gap-3 border-b border-white/10">
-          <div className="w-10 h-10 rounded-full bg-orange-500 flex items-center justify-center font-bold">
-            {user?.name?.[0]}
-          </div>
+          <Avatar name={user?.name} imageUrl={avatarUrl} size="md" />
           <div>
             <p className="font-medium">{user?.name}</p>
             <p className="text-xs text-gray-400">
@@ -82,10 +85,8 @@ const DashboardLayout = () => {
 
       <main className="flex-1">
         <header className="flex justify-end items-center gap-4 px-8 py-4 bg-[#f5f0e8]">
-          <Bell size={20} />
-          <div className="w-9 h-9 rounded-full bg-orange-500 text-white flex items-center justify-center font-bold">
-            {user?.name?.[0]}
-          </div>
+          <NotificationBell />
+          <Avatar name={user?.name} imageUrl={avatarUrl} size="sm" />
         </header>
         <div className="px-8 pb-8">
           <Outlet />

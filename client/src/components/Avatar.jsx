@@ -7,9 +7,9 @@ const Avatar = ({ name, imageUrl, size = "md" }) => {
     .slice(0, 2) || "?";
 
   const sizeClasses = {
-    sm: "w-7 h-7 text-[10px]",   // was w-8 h-8 — smaller
-    md: "w-9 h-9 text-xs",       // was w-10 h-10
-    lg: "w-11 h-11 text-sm",     // was w-12 h-12
+    sm: "w-7 h-7 text-[10px]",
+    md: "w-9 h-9 text-xs",
+    lg: "w-11 h-11 text-sm",
   };
 
   const bgColors = [
@@ -36,4 +36,5 @@ const Avatar = ({ name, imageUrl, size = "md" }) => {
     </div>
   );
 };
+
 export default Avatar;
