@@ -75,7 +75,8 @@ const RecruiterDashboard = () => {
       <h1 className="text-2xl font-bold">Dashboard</h1>
       <p className="text-sm text-gray-500 mt-1">Welcome back, here's your overview</p>
 
-      <div className="grid grid-cols-4 gap-4 mt-6">
+      {/* Stat Cards - responsive: 2 cols on mobile, 4 on larger screens */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
         <StatCard
           icon={Briefcase}
           value={data.jobsPosted}
@@ -106,7 +107,8 @@ const RecruiterDashboard = () => {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-6 mt-6">
+      {/* Main Content - stack on mobile, side-by-side on md+ */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Status Distribution - Pie Chart */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
           <h3 className="font-semibold text-gray-800 mb-1">Status Distribution</h3>
@@ -157,9 +159,9 @@ const RecruiterDashboard = () => {
         </div>
 
         {/* Upcoming Interviews */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
+        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 min-w-0">
           <div className="flex items-center justify-between mb-4">
-            <div>
+            <div className="min-w-0">
               <h3 className="font-semibold text-gray-800">Upcoming Interviews</h3>
               <p className="text-xs text-gray-400 mt-0.5">
                 {interviews.length} scheduled
@@ -167,7 +169,7 @@ const RecruiterDashboard = () => {
             </div>
             <button
               onClick={() => navigate("/applicants")}
-              className="text-xs text-orange-500 font-medium hover:underline flex items-center gap-0.5"
+              className="text-xs text-orange-500 font-medium hover:underline flex items-center gap-0.5 shrink-0"
             >
               View all <ChevronRight size={14} />
             </button>
@@ -186,11 +188,12 @@ const RecruiterDashboard = () => {
               {interviews.map((iv) => (
                 <div
                   key={iv._id}
-                  className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50/80 transition-colors cursor-pointer"
+                  className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50/80 transition-colors cursor-pointer gap-3"
                   onClick={() => navigate(`/applicants`)}
                 >
-                  <div className="flex items-center gap-3">
-                    <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center">
+                  {/* Left: Avatar + Name/Title */}
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
                       <span className="text-xs font-semibold text-orange-600">
                         {iv.candidate?.name
                           ?.split(" ")
@@ -200,21 +203,34 @@ const RecruiterDashboard = () => {
                           .slice(0, 2) || "?"}
                       </span>
                     </div>
-                    <div>
-                      <p className="font-medium text-sm text-gray-800">
+                    <div className="min-w-0">
+                      <p className="font-medium text-sm text-gray-800 truncate">
                         {iv.candidate?.name}
                       </p>
-                      <p className="text-xs text-gray-400">{iv.job?.title}</p>
+                      <p className="text-xs text-gray-400 truncate">
+                        {iv.job?.title}
+                      </p>
                     </div>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs text-gray-500">
-                    <Clock size={13} />
-                    {new Date(iv.scheduledAt).toLocaleString("en-US", {
-                      month: "short",
-                      day: "numeric",
-                      hour: "2-digit",
-                      minute: "2-digit",
-                    })}
+
+                  {/* Right: Date + Time (shrink-protected) */}
+                  <div className="shrink-0 text-right text-xs text-gray-500">
+                    <div className="flex items-center gap-1 justify-end">
+                      <Clock size={13} />
+                      <span>
+                        {new Date(iv.scheduledAt).toLocaleString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </span>
+                    </div>
+                    <span className="text-gray-400">
+                      {new Date(iv.scheduledAt).toLocaleString("en-US", {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: true,
+                      })}
+                    </span>
                   </div>
                 </div>
               ))}
