@@ -13,17 +13,17 @@ const StatCard = ({ icon: Icon, value, label, trend, to, color = "orange" }) => 
   return (
     <div
       onClick={() => to && navigate(to)}
-      className={`group bg-white rounded-xl p-5 shadow-sm border border-transparent transition-all duration-200
+      className={`group bg-white rounded-xl p-4 md:p-5 shadow-sm border border-transparent transition-all duration-200
         ${to ? "cursor-pointer hover:shadow-lg hover:border-orange-200 hover:-translate-y-1" : ""}`}
     >
-      <div className="flex justify-between items-start mb-3">
-        <div className={`w-10 h-10 rounded-lg flex items-center justify-center transition-colors duration-200 ${colorMap[color]}`}>
-          <Icon size={20} className="transition-colors duration-200 group-hover:text-white" />
+      <div className="flex justify-between items-start mb-2 md:mb-3">
+        <div className={`w-9 h-9 md:w-10 md:h-10 rounded-lg flex items-center justify-center transition-colors duration-200 ${colorMap[color]}`}>
+          <Icon size={18} className="transition-colors duration-200 group-hover:text-white md:size-5" />
         </div>
         {trend && <span className="text-xs text-green-500 font-medium">{trend}</span>}
       </div>
-      <p className="text-3xl font-bold">{value}</p>
-      <p className="text-sm text-gray-500">{label}</p>
+      <p className="text-2xl md:text-3xl font-bold">{value}</p>
+      <p className="text-xs md:text-sm text-gray-500 leading-tight">{label}</p>
     </div>
   );
 };
