@@ -57,12 +57,6 @@ const MyApplications = () => {
           <p className="text-sm text-gray-400 mt-1">
             Browse jobs and apply to start your journey
           </p>
-          <Button
-            onClick={() => window.location.href = "/jobs"}
-            className="mt-4 h-9 px-6"
-          >
-            Browse Jobs
-          </Button>
         </div>
       ) : (
         <div className="mt-6 space-y-3">
