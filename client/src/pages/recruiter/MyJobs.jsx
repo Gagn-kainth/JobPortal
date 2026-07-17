@@ -75,14 +75,7 @@ const MyJobs = () => {
                       <p className="text-sm text-gray-400 mt-1">
                         Create your first job posting to start receiving applicants.
                       </p>
-                      <button
-                        onClick={() => navigate("/jobs/new")}
-                        className="mt-4 h-10 px-4 rounded-xl bg-orange-500 text-white text-sm font-medium
-                                   flex items-center gap-2 hover:bg-orange-600 transition-colors"
-                      >
-                        <Plus size={16} />
-                        Post New Job
-                      </button>
+          
                     </div>
                   </td>
                 </tr>
