@@ -145,7 +145,7 @@ const FindJobs = () => {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-2 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
           {Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
@@ -171,7 +171,7 @@ const FindJobs = () => {
           </p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 gap-4 mt-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6 items-start">
           {jobs.map((job) => {
             const isExpanded = expandedJobs[job._id];
             const visibleRequirements = isExpanded
@@ -185,12 +185,12 @@ const FindJobs = () => {
                 key={job._id}
                 className="bg-white rounded-xl p-5 shadow-sm border border-gray-100 
                            transition-all duration-200 hover:shadow-md hover:border-orange-200
-                           flex flex-col h-full"
+                           flex flex-col h-full min-w-0"
               >
                 {/* Header with save button */}
                 <div className="flex items-start justify-between gap-3">
-                  <h3 className="font-semibold text-lg text-gray-900 capitalize">
-                    {job.title}
+                  <h3 className="font-semibold text-lg text-gray-900 capitalize min-w-0">
+                    <span className="block truncate">{job.title}</span>
                   </h3>
                   <button
                     onClick={() => toggleSaveJob(job._id)}
@@ -206,15 +206,15 @@ const FindJobs = () => {
                 </div>
 
                 <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-sm text-gray-500 mt-2.5">
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 min-w-0">
                     <MapPin size={14} className="shrink-0" />
-                    {job.location}
+                    <span className="truncate">{job.location}</span>
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 shrink-0">
                     <DollarSign size={14} className="shrink-0" />
                     {formatSalary(job.salary)}
                   </span>
-                  <span className="flex items-center gap-1">
+                  <span className="flex items-center gap-1 shrink-0">
                     <Clock size={14} className="shrink-0" />
                     {job.jobType}
                   </span>
@@ -234,7 +234,7 @@ const FindJobs = () => {
                       {visibleRequirements.map((req, i) => (
                         <span
                           key={i}
-                          className="bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded-lg border border-gray-100"
+                          className="bg-gray-50 text-gray-600 text-xs px-2.5 py-1 rounded-lg border border-gray-100 wrap-break-word max-w-full"
                         >
                           {req}
                         </span>
@@ -266,18 +266,18 @@ const FindJobs = () => {
                 <div className="flex-1" />
 
                 {applyingJobId === job._id ? (
-                  <div className="mt-4 p-3 bg-orange-50/50 rounded-xl border border-orange-100">
-                    <div className="flex items-center justify-between mb-2">
-                      <p className="text-xs text-gray-600 font-medium flex items-center gap-1.5">
-                        <Upload size={13} className="text-orange-500" />
-                        Upload resume to apply
+                  <div className="mt-4 p-3 bg-orange-50/50 rounded-xl border border-orange-100 min-w-0">
+                    <div className="flex items-center justify-between mb-2 gap-2">
+                      <p className="text-xs text-gray-600 font-medium flex items-center gap-1.5 min-w-0">
+                        <Upload size={13} className="text-orange-500 shrink-0" />
+                        <span className="truncate">Upload resume to apply</span>
                       </p>
                       <button
                         onClick={() => {
                           setApplyingJobId(null);
                           setResumeFile(null);
                         }}
-                        className="p-1 rounded-md hover:bg-orange-100 text-gray-400 hover:text-gray-600 transition-colors"
+                        className="p-1 rounded-md hover:bg-orange-100 text-gray-400 hover:text-gray-600 transition-colors shrink-0"
                       >
                         <X size={14} />
                       </button>
@@ -290,7 +290,7 @@ const FindJobs = () => {
                         className="hidden"
                       />
                       <div
-                        className={`h-10 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed cursor-pointer text-sm transition-colors ${
+                        className={`h-10 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed cursor-pointer text-sm transition-colors px-3 ${
                           resumeFile
                             ? "border-orange-300 bg-orange-50 text-orange-700"
                             : "border-gray-200 hover:border-orange-300 text-gray-400 hover:text-gray-600"
@@ -298,13 +298,13 @@ const FindJobs = () => {
                       >
                         {resumeFile ? (
                           <>
-                            <Upload size={14} />
-                            {resumeFile.name}
+                            <Upload size={14} className="shrink-0" />
+                            <span className="truncate">{resumeFile.name}</span>
                           </>
                         ) : (
                           <>
-                            <Upload size={14} />
-                            Click to upload PDF, DOC, or DOCX
+                            <Upload size={14} className="shrink-0" />
+                            <span className="truncate">Click to upload PDF, DOC, or DOCX</span>
                           </>
                         )}
                       </div>
