@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../../api/axios";
 import StatCard from "../../components/StatCard";
+
 import {
   Briefcase,
   Users,
@@ -10,7 +11,8 @@ import {
   Clock,
   ChevronRight,
 } from "lucide-react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
+
+import { PieChart, Pie, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = {
   Pending: "#F59E0B",
@@ -23,6 +25,7 @@ const COLORS = {
 
 const RecruiterDashboard = () => {
   const navigate = useNavigate();
+
   const [data, setData] = useState(null);
   const [interviews, setInterviews] = useState([]);
 
@@ -32,6 +35,7 @@ const RecruiterDashboard = () => {
         api.get("/dashboard/recruiter"),
         api.get("/interviews/recruiter"),
       ]);
+
       setData(dashRes.data);
       setInterviews(interviewRes.data);
     } catch {
@@ -41,37 +45,44 @@ const RecruiterDashboard = () => {
 
   useEffect(() => {
     fetchData();
+
     const interval = setInterval(fetchData, 15000);
+
     return () => clearInterval(interval);
   }, []);
 
-  if (!data)
+  if (!data) {
     return (
       <div className="flex items-center justify-center h-64">
         <div className="w-8 h-8 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
       </div>
     );
+  }
 
   const totalApplicants = data.applicantsPerJob.reduce(
     (a, j) => a + j.count,
     0
   );
+
   const hiredCount =
     data.statusBreakdown.find((s) => s._id === "Hired")?.count || 0;
 
   const pieData = data.statusBreakdown.map((s) => ({
     name: s._id,
     value: s.count,
+    fill: COLORS[s._id] || "#9CA3AF",
   }));
 
   return (
     <div>
+      {/* Header */}
       <h1 className="text-2xl font-bold">Dashboard</h1>
+
       <p className="text-sm text-gray-500 mt-1">
         Welcome back, here's your overview
       </p>
 
-      {/* Stat Cards - responsive: 2 cols on mobile, 4 on larger screens */}
+      {/* Stat Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
         <StatCard
           icon={Briefcase}
@@ -80,6 +91,7 @@ const RecruiterDashboard = () => {
           to="/my-jobs"
           color="orange"
         />
+
         <StatCard
           icon={Users}
           value={totalApplicants}
@@ -87,6 +99,7 @@ const RecruiterDashboard = () => {
           to="/applicants"
           color="blue"
         />
+
         <StatCard
           icon={Calendar}
           value={interviews.length}
@@ -94,6 +107,7 @@ const RecruiterDashboard = () => {
           to="/applicants"
           color="purple"
         />
+
         <StatCard
           icon={Award}
           value={hiredCount}
@@ -103,17 +117,28 @@ const RecruiterDashboard = () => {
         />
       </div>
 
-      {/* Main Content - stack on mobile, side-by-side on md+ */}
+      {/* Main Content */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Status Distribution - Pie Chart */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-1">
-            Status Distribution
-          </h3>
-          <p className="text-xs text-gray-400 mb-6">
-            Breakdown of all applicants
-          </p>
-          <div className="h-64">
+        {/* Status Distribution */}
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 hover:border-orange-100 hover:shadow-md transition-all duration-200">
+          <div className="flex items-start justify-between mb-1">
+            <div>
+              <h3 className="font-semibold text-gray-800">
+                Status Distribution
+              </h3>
+
+              <p className="text-xs text-gray-400 mt-1">
+                Breakdown of all applicants
+              </p>
+            </div>
+
+            <div className="w-9 h-9 rounded-xl bg-orange-50 flex items-center justify-center">
+              <Users size={17} className="text-orange-500" />
+            </div>
+          </div>
+
+          {/* Chart */}
+          <div className="h-64 mt-3">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -124,34 +149,53 @@ const RecruiterDashboard = () => {
                   outerRadius={90}
                   paddingAngle={4}
                   dataKey="value"
+                  nameKey="name"
                   stroke="none"
-                >
-                  {pieData.map((entry, index) => (
-                    <Cell
-                      key={`cell-${index}`}
-                      fill={COLORS[entry.name] || "#9CA3AF"}
-                    />
-                  ))}
-                </Pie>
+                />
+
                 <Tooltip
+                  cursor={false}
                   contentStyle={{
                     borderRadius: "12px",
-                    border: "1px solid #F3F4F6",
-                    boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.05)",
+                    border: "1px solid #f3f4f6",
+                    boxShadow: "0 8px 20px rgba(0,0,0,0.08)",
+                    fontSize: "12px",
+                    padding: "8px 12px",
                   }}
                 />
               </PieChart>
             </ResponsiveContainer>
           </div>
-          <div className="flex flex-wrap gap-3 mt-4 justify-center">
+
+          {/* Legend */}
+          <div className="flex flex-wrap gap-2.5 mt-3 justify-center">
             {pieData.map((entry) => (
-              <div key={entry.name} className="flex items-center gap-1.5">
+              <div
+                key={entry.name}
+                className="
+                  flex items-center gap-1.5
+                  px-2.5 py-1.5
+                  rounded-lg
+                  bg-gray-50
+                  border border-gray-100
+                  hover:bg-orange-50
+                  hover:border-orange-100
+                  transition-all duration-200
+                "
+              >
                 <span
-                  className="w-2.5 h-2.5 rounded-full"
-                  style={{ backgroundColor: COLORS[entry.name] }}
+                  className="w-2.5 h-2.5 rounded-full shrink-0"
+                  style={{
+                    backgroundColor: entry.fill,
+                  }}
                 />
-                <span className="text-xs text-gray-500">
-                  {entry.name} ({entry.value})
+
+                <span className="text-xs font-medium text-gray-600">
+                  {entry.name}
+                </span>
+
+                <span className="text-xs font-semibold text-gray-800">
+                  {entry.value}
                 </span>
               </div>
             ))}
@@ -159,29 +203,44 @@ const RecruiterDashboard = () => {
         </div>
 
         {/* Upcoming Interviews */}
-        <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 min-w-0">
-          <div className="flex items-center justify-between mb-4">
+        <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 min-w-0 hover:border-orange-100 hover:shadow-md transition-all duration-200">
+          <div className="flex items-center justify-between mb-5">
             <div className="min-w-0">
               <h3 className="font-semibold text-gray-800">
                 Upcoming Interviews
               </h3>
-              <p className="text-xs text-gray-400 mt-0.5">
+
+              <p className="text-xs text-gray-400 mt-1">
                 {interviews.length} scheduled
               </p>
             </div>
+
             <button
               onClick={() => navigate("/applicants")}
-              className="text-xs text-orange-500 font-medium hover:underline flex items-center gap-0.5 shrink-0"
+              className="
+                text-xs text-orange-500 font-medium
+                hover:text-orange-600
+                flex items-center gap-0.5 shrink-0
+                hover:translate-x-0.5
+                transition-all duration-200
+              "
             >
-              View all <ChevronRight size={14} />
+              View all
+              <ChevronRight size={14} />
             </button>
           </div>
 
           {interviews.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-10 text-center">
-              <Calendar size={32} className="text-gray-200 mb-2" />
-              <p className="text-sm text-gray-400">No interviews scheduled</p>
-              <p className="text-xs text-gray-300 mt-0.5">
+              <div className="w-12 h-12 rounded-xl bg-orange-50 flex items-center justify-center mb-3">
+                <Calendar size={22} className="text-orange-400" />
+              </div>
+
+              <p className="text-sm font-medium text-gray-600">
+                No interviews scheduled
+              </p>
+
+              <p className="text-xs text-gray-400 mt-1">
                 Shortlist candidates to schedule interviews
               </p>
             </div>
@@ -190,13 +249,39 @@ const RecruiterDashboard = () => {
               {interviews.map((iv) => (
                 <div
                   key={iv._id}
-                  className="flex items-center justify-between p-3 rounded-xl hover:bg-gray-50/80 transition-colors cursor-pointer gap-3"
-                  onClick={() => navigate(`/applicants`)}
+                  onClick={() => navigate("/applicants")}
+                  className="
+                    group flex items-center justify-between
+                    p-3 rounded-xl gap-3 cursor-pointer
+                    bg-gray-50/50
+                    border border-transparent
+                    hover:bg-orange-50
+                    hover:border-orange-100
+                    hover:shadow-sm
+                    hover:scale-[1.01]
+                    transition-all duration-200
+                  "
                 >
-                  {/* Left: Avatar + Name/Title */}
+                  {/* Avatar + Candidate */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-full bg-orange-100 flex items-center justify-center shrink-0">
-                      <span className="text-xs font-semibold text-orange-600">
+                    <div
+                      className="
+                        w-10 h-10 rounded-xl
+                        bg-orange-100
+                        flex items-center justify-center shrink-0
+                        group-hover:bg-orange-500
+                        group-hover:scale-105
+                        transition-all duration-200
+                      "
+                    >
+                      <span
+                        className="
+                          text-xs font-bold
+                          text-orange-600
+                          group-hover:text-white
+                          transition-colors duration-200
+                        "
+                      >
                         {iv.candidate?.name
                           ?.split(" ")
                           .map((n) => n[0])
@@ -205,20 +290,26 @@ const RecruiterDashboard = () => {
                           .slice(0, 2) || "?"}
                       </span>
                     </div>
+
                     <div className="min-w-0">
-                      <p className="font-medium text-sm text-gray-800 truncate">
+                      <p className="font-semibold text-sm text-gray-800 truncate group-hover:text-orange-700 transition-colors">
                         {iv.candidate?.name}
                       </p>
-                      <p className="text-xs text-gray-400 truncate">
+
+                      <p className="text-xs text-gray-400 truncate mt-0.5">
                         {iv.job?.title}
                       </p>
                     </div>
                   </div>
 
-                  {/* Right: Date + Time (shrink-protected) */}
-                  <div className="shrink-0 text-right text-xs text-gray-500">
-                    <div className="flex items-center gap-1 justify-end">
-                      <Clock size={13} />
+                  {/* Date + Time */}
+                  <div className="shrink-0 text-right">
+                    <div className="flex items-center gap-1.5 justify-end text-xs font-medium text-gray-600">
+                      <Clock
+                        size={13}
+                        className="text-orange-400 group-hover:text-orange-500 transition-colors"
+                      />
+
                       <span>
                         {new Date(iv.scheduledAt).toLocaleString("en-US", {
                           month: "short",
@@ -226,7 +317,8 @@ const RecruiterDashboard = () => {
                         })}
                       </span>
                     </div>
-                    <span className="text-gray-400">
+
+                    <span className="text-[11px] text-gray-400 block mt-1">
                       {new Date(iv.scheduledAt).toLocaleString("en-US", {
                         hour: "2-digit",
                         minute: "2-digit",

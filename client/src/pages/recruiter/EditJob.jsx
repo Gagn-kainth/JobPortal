@@ -12,6 +12,7 @@ const EditJob = () => {
   useEffect(() => {
     api.get(`/jobs/${id}`).then((res) => {
       const job = res.data;
+
       setForm({
         ...job,
         requirements: (job.requirements || []).join("\n"),
@@ -19,16 +20,19 @@ const EditJob = () => {
     });
   }, [id]);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) =>
+    setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
       await api.put(`/jobs/${id}`, {
         ...form,
         salary: Number(form.salary),
         requirements: form.requirements.split("\n").filter(Boolean),
       });
+
       toast.success("Job updated");
       navigate("/my-jobs");
     } catch (err) {
@@ -36,34 +40,105 @@ const EditJob = () => {
     }
   };
 
-  if (!form) return <p>Loading...</p>;
+  if (!form) {
+    return (
+      <div className="flex items-center gap-2 text-sm text-gray-500">
+        <div className="w-4 h-4 border-2 border-orange-500 border-t-transparent rounded-full animate-spin" />
+        Loading...
+      </div>
+    );
+  }
+
+  const inputClass = `
+    w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm
+    bg-white text-gray-800
+    hover:border-orange-300 hover:bg-orange-50/30
+    focus:outline-none focus:border-orange-400
+    focus:ring-4 focus:ring-orange-400/10
+    transition-all duration-200
+  `;
+
+  const labelClass = "block text-sm font-medium text-gray-700 mb-1.5";
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">Edit Job</h1>
-      <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 mt-6 shadow-sm space-y-4 max-w-2xl">
+      <h1 className="text-2xl font-bold text-gray-900">Edit Job</h1>
+
+      <p className="text-sm text-gray-500 mt-1">
+        Update the details of your job posting.
+      </p>
+
+      <form
+        onSubmit={handleSubmit}
+        className="
+          bg-white rounded-2xl p-6 mt-6
+          shadow-sm border border-gray-100
+          space-y-5 max-w-2xl
+          hover:border-orange-100 hover:shadow-md
+          transition-all duration-200
+        "
+      >
+        {/* Job Title */}
         <div>
-          <label className="block text-sm font-medium mb-1">Job Title</label>
-          <input name="title" value={form.title} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 text-sm" required />
+          <label className={labelClass}>Job Title</label>
+          <input
+            name="title"
+            value={form.title}
+            onChange={handleChange}
+            className={inputClass}
+            required
+          />
         </div>
+
+        {/* Company */}
         <div>
-          <label className="block text-sm font-medium mb-1">Company</label>
-          <input name="company" value={form.company} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 text-sm" required />
+          <label className={labelClass}>Company</label>
+          <input
+            name="company"
+            value={form.company}
+            onChange={handleChange}
+            className={inputClass}
+            required
+          />
         </div>
+
+        {/* Location + Salary */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Location</label>
-            <input name="location" value={form.location} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 text-sm" required />
+            <label className={labelClass}>Location</label>
+            <input
+              name="location"
+              value={form.location}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1">Salary (USD/yr)</label>
-            <input name="salary" type="number" value={form.salary} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 text-sm" required />
+            <label className={labelClass}>Salary (USD/yr)</label>
+            <input
+              name="salary"
+              type="number"
+              value={form.salary}
+              onChange={handleChange}
+              className={inputClass}
+              required
+            />
           </div>
         </div>
+
+        {/* Employment + Experience */}
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium mb-1">Employment Type</label>
-            <select name="jobType" value={form.jobType} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 text-sm">
+            <label className={labelClass}>Employment Type</label>
+
+            <select
+              name="jobType"
+              value={form.jobType}
+              onChange={handleChange}
+              className={`${inputClass} cursor-pointer`}
+            >
               <option>Full-time</option>
               <option>Part-time</option>
               <option>Internship</option>
@@ -71,9 +146,16 @@ const EditJob = () => {
               <option>Remote</option>
             </select>
           </div>
+
           <div>
-            <label className="block text-sm font-medium mb-1">Experience Level</label>
-            <select name="experienceLevel" value={form.experienceLevel} onChange={handleChange} className="w-full border rounded-lg px-3 py-2 text-sm">
+            <label className={labelClass}>Experience Level</label>
+
+            <select
+              name="experienceLevel"
+              value={form.experienceLevel}
+              onChange={handleChange}
+              className={`${inputClass} cursor-pointer`}
+            >
               <option>Fresher</option>
               <option>Junior</option>
               <option>Intermediate</option>
@@ -81,15 +163,48 @@ const EditJob = () => {
             </select>
           </div>
         </div>
+
+        {/* Description */}
         <div>
-          <label className="block text-sm font-medium mb-1">Job Description</label>
-          <textarea name="description" value={form.description} onChange={handleChange} rows={4} className="w-full border rounded-lg px-3 py-2 text-sm" required />
+          <label className={labelClass}>Job Description</label>
+
+          <textarea
+            name="description"
+            value={form.description}
+            onChange={handleChange}
+            rows={4}
+            className={`${inputClass} resize-none`}
+            required
+          />
         </div>
+
+        {/* Requirements */}
         <div>
-          <label className="block text-sm font-medium mb-1">Requirements (one per line)</label>
-          <textarea name="requirements" value={form.requirements} onChange={handleChange} rows={4} className="w-full border rounded-lg px-3 py-2 text-sm" />
+          <label className={labelClass}>
+            Requirements
+            <span className="text-gray-400 font-normal ml-1">
+              (one per line)
+            </span>
+          </label>
+
+          <textarea
+            name="requirements"
+            value={form.requirements}
+            onChange={handleChange}
+            rows={4}
+            className={`${inputClass} resize-none`}
+          />
         </div>
-        <Button type="submit">Save Changes</Button>
+
+        {/* Button */}
+        <div className="pt-1">
+          <Button
+            type="submit"
+            className="hover:scale-[1.02] transition-all duration-200"
+          >
+            Save Changes
+          </Button>
+        </div>
       </form>
     </div>
   );
