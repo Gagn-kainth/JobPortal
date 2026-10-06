@@ -10,13 +10,7 @@ import {
   Clock,
   ChevronRight,
 } from "lucide-react";
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Tooltip,
-} from "recharts";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 
 const COLORS = {
   Pending: "#F59E0B",
@@ -73,7 +67,9 @@ const RecruiterDashboard = () => {
   return (
     <div>
       <h1 className="text-2xl font-bold">Dashboard</h1>
-      <p className="text-sm text-gray-500 mt-1">Welcome back, here's your overview</p>
+      <p className="text-sm text-gray-500 mt-1">
+        Welcome back, here's your overview
+      </p>
 
       {/* Stat Cards - responsive: 2 cols on mobile, 4 on larger screens */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -111,8 +107,12 @@ const RecruiterDashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
         {/* Status Distribution - Pie Chart */}
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-          <h3 className="font-semibold text-gray-800 mb-1">Status Distribution</h3>
-          <p className="text-xs text-gray-400 mb-6">Breakdown of all applicants</p>
+          <h3 className="font-semibold text-gray-800 mb-1">
+            Status Distribution
+          </h3>
+          <p className="text-xs text-gray-400 mb-6">
+            Breakdown of all applicants
+          </p>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
@@ -162,7 +162,9 @@ const RecruiterDashboard = () => {
         <div className="bg-white rounded-xl p-6 shadow-sm border border-gray-100 min-w-0">
           <div className="flex items-center justify-between mb-4">
             <div className="min-w-0">
-              <h3 className="font-semibold text-gray-800">Upcoming Interviews</h3>
+              <h3 className="font-semibold text-gray-800">
+                Upcoming Interviews
+              </h3>
               <p className="text-xs text-gray-400 mt-0.5">
                 {interviews.length} scheduled
               </p>
