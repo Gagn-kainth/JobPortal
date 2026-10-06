@@ -78,19 +78,6 @@ const AuthSidePanel = () => {
 
       {/* Main Content */}
       <div className="relative z-10 max-w-lg">
-        {/* Small Badge */}
-        <div
-          className="inline-flex items-center gap-2
-                     px-3 py-1.5 rounded-full
-                     bg-orange-500/10
-                     border border-orange-500/20
-                     text-orange-400 text-xs font-medium
-                     mb-6"
-        >
-          <Sparkles size={13} />
-          Find your next opportunity
-        </div>
-
         <h2
           className="text-4xl xl:text-5xl
                      font-bold leading-[1.1]
